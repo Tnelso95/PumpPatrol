@@ -22,12 +22,15 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent">
 
+
+        <!-- Account Icon -->
         <ImageView
             android:layout_width="160dp"
             android:layout_height="160dp"
             android:src="@drawable/account_icon"
             android:layout_gravity="center"/>
 
+        <!-- Username Input -->
         <EditText
             android:id="@+id/username_input"
             android:layout_width="match_parent"
@@ -41,6 +44,7 @@
             android:inputType="text"
             android:layout_marginTop="32dp"/>
 
+        <!-- Password Input -->
         <EditText
             android:id="@+id/password_input"
             android:layout_width="match_parent"
@@ -54,6 +58,7 @@
             android:inputType="textPassword"
             android:layout_marginTop="16dp"/>
 
+        <!-- LogIn Button -->
         <Button
             android:id="@+id/login_button"
             android:layout_width="match_parent"
