@@ -40,7 +40,7 @@ class MainActivity : AppCompatActivity() {
             val password = passwordInput.text.toString()
 
             if (username.isNotEmpty() && password.isNotEmpty()) {
-                // On successful login, show the main content
+                // If  login successful, go to the main app
                 binding.loginLayout.visibility = View.GONE
                 binding.mainContent.visibility = View.VISIBLE
             }
