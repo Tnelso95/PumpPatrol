@@ -5,6 +5,8 @@ import android.os.Bundle
 import android.view.View
 import android.widget.Button
 import android.widget.EditText
+import android.widget.TextView
+import java.text.SimpleDateFormat
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.navigation.findNavController
@@ -13,6 +15,9 @@ import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.example.pumppatrol.databinding.ActivityMainBinding
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import java.util.Calendar
+import java.util.Date
+import java.util.Locale
 
 class MainActivity : AppCompatActivity() {
 
@@ -21,9 +26,13 @@ class MainActivity : AppCompatActivity() {
     private lateinit var passwordInput: EditText
     private lateinit var loginButton: Button
     private lateinit var sharedPreferences: SharedPreferences
+    private lateinit var streakTextView: TextView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        streakTextView = findViewById(R.id.streak_text)
+        loginStreak()
 
         // Initialize SharedPreferences
         sharedPreferences = getSharedPreferences("AppSettings", MODE_PRIVATE)
@@ -98,5 +107,36 @@ class MainActivity : AppCompatActivity() {
     private fun applyBackground(isDarkMode: Boolean) {
         val backgroundRes = if (isDarkMode) R.drawable.background_dark else R.drawable.background_light
         binding.root.setBackgroundResource(backgroundRes)
+    }
+
+    private fun loginStreak(){
+        val todayDate = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(Date())
+        val lastLoginDate = sharedPreferences.getString("lastLoginDate", null)
+        var streakCount = sharedPreferences.getInt("streakCount", 0)
+
+        if (lastLoginDate == null) {
+            streakCount = 1  // this will be the users first login
+        } else {
+            val lastDate = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).parse(lastLoginDate)
+            val calendar = Calendar.getInstance()
+            calendar.time = lastDate!!
+
+            calendar.add(Calendar.DAY_OF_YEAR, 1)
+            val expectedNextLogin = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(calendar.time)
+
+            if (todayDate == expectedNextLogin) {
+                streakCount++  // Continue streak
+            } else if (todayDate != lastLoginDate) {
+                streakCount = 1  // Streak reset
+            }
+        }
+
+        // Save the updated streak
+        sharedPreferences.edit()
+            .putString("lastLoginDate", todayDate)
+            .putInt("streakCount", streakCount)
+            .apply()
+
+        streakTextView.text = "Welcome back! Your streak is now up to" + streakCount + "days."
     }
 }
