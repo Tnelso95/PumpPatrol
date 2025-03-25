@@ -31,9 +31,6 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        streakTextView = findViewById(R.id.streak_text)
-        loginStreak()
-
         // Initialize SharedPreferences
         sharedPreferences = getSharedPreferences("AppSettings", MODE_PRIVATE)
 
@@ -47,6 +44,9 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        streakTextView = findViewById(R.id.streak_text)
+        loginStreak()
+
         // Apply the correct background
         applyBackground(isDarkMode)
 
@@ -59,7 +59,7 @@ class MainActivity : AppCompatActivity() {
         val mainContent = findViewById<View>(R.id.main_content)
 
         // Check login state before setting visibility
-        val isLoggedIn = sharedPreferences.getBoolean("isLoggedIn", false)
+        val isLoggedIn = false
         if (isLoggedIn) {
             loginLayout.visibility = View.GONE
             mainContent.visibility = View.VISIBLE
@@ -137,6 +137,6 @@ class MainActivity : AppCompatActivity() {
             .putInt("streakCount", streakCount)
             .apply()
 
-        streakTextView.text = "Welcome back! Your streak is now up to" + streakCount + "days."
+        streakTextView.text = "Welcome back! Your streak is now " + streakCount + " days."
     }
 }
