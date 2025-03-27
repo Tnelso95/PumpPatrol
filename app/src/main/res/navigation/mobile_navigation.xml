@@ -18,9 +18,11 @@
         tools:layout="@layout/fragment_workout" >
         <action
             android:id="@+id/action_workoutOptions_to_premadeWorkoutFragment"
+
             app:destination="@id/premadeWorkoutFragment" />
         <action
             android:id="@+id/action_workoutOptions_to_customWorkoutFragment"
+            app:defaultNavHost="true"
             app:destination="@id/customWorkoutFragment" />
     </fragment>
 
