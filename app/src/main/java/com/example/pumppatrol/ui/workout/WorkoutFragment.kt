@@ -9,6 +9,7 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import com.example.pumppatrol.R
 
 class WorkoutFragment : Fragment() {
@@ -26,32 +27,51 @@ class WorkoutFragment : Fragment() {
     ): View {
         val view = inflater.inflate(R.layout.fragment_workout, container, false)
 
-        textWorkout = view.findViewById(R.id.text_workout)
-        btnStart = view.findViewById(R.id.btn_start)
-        btnStop = view.findViewById(R.id.btn_stop)
+        // Get the buttons by their IDs
+        val btnPremade = view.findViewById<Button>(R.id.btn_premade_workout)
+        val btnCustom = view.findViewById<Button>(R.id.btn_custom_workout)
 
-        btnStart.setOnClickListener {
-            running = true
-            handler.post(runnable)
+        // Set up click listeners to navigate to the respective fragments
+        btnPremade.setOnClickListener {
+            findNavController().navigate(R.id.action_workoutOptions_to_premadeWorkoutFragment)
         }
 
-        btnStop.setOnClickListener {
-            running = false
-            handler.removeCallbacks(runnable)
+        btnCustom.setOnClickListener {
+            findNavController().navigate(R.id.action_workoutOptions_to_customWorkoutFragment)
         }
 
         return view
     }
-
-    private val runnable = object : Runnable {
-        override fun run() {
-            if (running) {
-                seconds++
-                val minutes = seconds / 60
-                val secs = seconds % 60
-                textWorkout.text = String.format("%02d:%02d", minutes, secs)
-                handler.postDelayed(this, 1000)
-            }
-        }
-    }
 }
+
+        //textWorkout = view.findViewById(R.id.text_workout)
+//        btnStart = view.findViewById(R.id.btn_start)
+//        btnStop = view.findViewById(R.id.btn_stop)
+//        btnStart = view.findViewById(R.id.btn_premade_workout)
+//        btnStop = view.findViewById(R.id.btn_custom_workout)
+//
+//        btnStart.setOnClickListener {
+//            running = true
+//            handler.post(runnable)
+//        }
+//
+//        btnStop.setOnClickListener {
+//            running = false
+//            handler.removeCallbacks(runnable)
+//        }
+//
+//        return view
+//    }
+//
+//    private val runnable = object : Runnable {
+//        override fun run() {
+//            if (running) {
+//                seconds++
+//                val minutes = seconds / 60
+//                val secs = seconds % 60
+//                textWorkout.text = String.format("%02d:%02d", minutes, secs)
+//                handler.postDelayed(this, 1000)
+//            }
+//        }
+//    }
+//}
