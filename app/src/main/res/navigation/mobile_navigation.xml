@@ -15,11 +15,38 @@
         android:id="@+id/navigation_workout"
         android:name="com.example.pumppatrol.ui.workout.WorkoutFragment"
         android:label="@string/title_workout"
-        tools:layout="@layout/fragment_workout" />
+        tools:layout="@layout/fragment_workout" >
+        <action
+            android:id="@+id/action_workoutOptions_to_premadeWorkoutFragment"
+
+            app:destination="@id/premadeWorkoutFragment" />
+        <action
+            android:id="@+id/action_workoutOptions_to_customWorkoutFragment"
+            app:defaultNavHost="true"
+            app:destination="@id/customWorkoutFragment" />
+    </fragment>
+
+    <fragment
+    android:id="@+id/premadeWorkoutFragment"
+    android:name="com.example.pumppatrol.ui.workout.PremadeWorkoutFragment"
+    tools:layout="@layout/fragment_premade_workout"
+    android:label="Pre-Made Workout" />
+
+    <fragment
+    android:id="@+id/customWorkoutFragment"
+    android:name="com.example.pumppatrol.ui.workout.CustomWorkoutFragment"
+    android:label="Custom Workout" />
 
     <fragment
         android:id="@+id/navigation_history"
         android:name="com.example.pumppatrol.ui.history.HistoryFragment"
         android:label="@string/title_history"
         tools:layout="@layout/fragment_history" />
+
+    <fragment
+        android:id="@+id/navigation_settings"
+        android:name="com.example.pumppatrol.ui.settings.SettingsFragment"
+        android:label="@string/title_settings"
+        tools:layout="@layout/fragment_history" />
+
 </navigation>
