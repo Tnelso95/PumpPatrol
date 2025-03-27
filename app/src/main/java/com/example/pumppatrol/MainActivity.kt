@@ -115,14 +115,20 @@ class MainActivity : AppCompatActivity() {
 
 
 
-    private fun showStreakPopup(streakCount: Int) {
+    private fun showStreakPopup(streakCount: Int, badgeMessage: String?) {
         val alertDialog = android.app.AlertDialog.Builder(this)
-        alertDialog.setTitle("Daily Streak")
-        alertDialog.setMessage("Welcome back! Your streak is now $streakCount days. Keep up the good work!")
+        alertDialog.setTitle("Daily Login Streak")
+
+        var message = "Welcome back! Your streak is now $streakCount days. Keep going! 🔥"
+        if (badgeMessage != null) {
+            message += "\n\n🏆 You've earned a badge!\n$badgeMessage"
+        }
+
+        alertDialog.setMessage(message)
         alertDialog.setPositiveButton("OK") { dialog, _ ->
             dialog.dismiss()
         }
-        alertDialog.setCancelable(false) // this will keep the pop up until ok is clicked
+        alertDialog.setCancelable(false)
         alertDialog.show()
     }
 
@@ -158,7 +164,23 @@ class MainActivity : AppCompatActivity() {
             .apply()
 
         // Show pop-up after login
-        showStreakPopup(streakCount)
+        // Check for badge
+        val badgeMessage = getBadgeForStreak(streakCount)
+
+        // Show pop-up with or without a badge
+        showStreakPopup(streakCount, badgeMessage)
+    }
+
+    private fun getBadgeForStreak(streakCount: Int): String? {
+        return when (streakCount) {
+            1 -> "🎉 Welcome to Pump Patrol! Today is only day one, so let's get to work!"
+            10 -> "🔥 10-Day Streak! You're on fire!"
+            25 -> "🏅 25-Day Streak! Nothing can stop you now!"
+            50 -> "💎 50 Days In a Row! You're unstoppable!"
+            100 -> "🌟 100 Days! You are an elite exerciser!"
+            365 -> "💪 One whole year! No days off, you are officially in G.O.A.T. status!"
+            else -> null
+        }
     }
 
 
