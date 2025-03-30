@@ -14,6 +14,7 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
+import com.example.pumppatrol.adapters.WorkoutAdapter
 
 class PremadeWorkoutFragment : Fragment() {
 
@@ -34,6 +35,46 @@ class PremadeWorkoutFragment : Fragment() {
 
         _binding = FragmentPremadeWorkoutBinding.inflate(inflater, container, false)
         val root: View = binding.root
+
+        val textView: TextView = binding.textPremade
+
+        myRef.addValueEventListener(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                val stringBuilder = StringBuilder()
+                val chestWorkouts = snapshot.child("Chest").children.mapNotNull { it.getValue(String::class.java) }.take(3)
+                val tricepsWorkouts = snapshot.child("Triceps").children.mapNotNull { it.getValue(String::class.java) }.take(3)
+
+                stringBuilder.append("Chest and Triceps Day:\n\n")
+
+                stringBuilder.append("Chest:\n")
+                chestWorkouts.forEach { stringBuilder.append("  - $it\n") }
+
+                stringBuilder.append("\nTriceps:\n")
+                tricepsWorkouts.forEach { stringBuilder.append("  - $it\n") }
+
+                textView.text = stringBuilder.toString()
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                textView.text = "Failed to read value: ${error.message}"
+            }
+        })
+
+        return root
+    }
+
+
+//        val textView: TextView = binding.textPremade
+//        val stringBuilder = StringBuilder()
+//
+//        for ((category, exercises) in WorkoutData.workouts) {
+//            stringBuilder.append("$category:\n")
+//            exercises.forEach { exercise ->
+//                stringBuilder.append("  - $exercise\n")
+//            }
+//        }
+//
+//        textView.text = stringBuilder.toString()
 
 
 //        //binding.textPremadeWorkout.text = "This is the premade"
@@ -92,42 +133,40 @@ class PremadeWorkoutFragment : Fragment() {
 //            }
 //        })
 
-        val textView: TextView = binding.textPremade
+        //val textView: TextView = binding.textPremade
 
         // Read from the database
-        myRef.addValueEventListener(object : ValueEventListener {
-            override fun onDataChange(snapshot: DataSnapshot) {
-                // This method is called once with the initial value and again
-                // whenever data at this location is updated.
+//        myRef.addValueEventListener(object : ValueEventListener {
+//            override fun onDataChange(snapshot: DataSnapshot) {
+//                // This method is called once with the initial value and again
+//                // whenever data at this location is updated.
+//
+//                // Iterate over the children of "Workouts" (Chest, Back, Shoulders, etc.)
+//                val stringBuilder = StringBuilder()
+//                for (workoutTypeSnapshot in snapshot.children) {
+//                    val workoutTypeName = workoutTypeSnapshot.key // e.g., "Chest", "Back"
+//                    stringBuilder.append("$workoutTypeName:\n")
+//
+//                    // Now get the list of exercises for this workout type
+//                    if (workoutTypeSnapshot.value is List<*>) {
+//                        val exercises = workoutTypeSnapshot.getValue(List::class.java) as List<String>
+//                        for (exercise in exercises) {
+//                            stringBuilder.append("  - $exercise\n")
+//                        }
+//                    }
+//                }
+//                textView.text = stringBuilder.toString()
+//
+//            }
+//
+//            override fun onCancelled(error: DatabaseError) {
+//                // Failed to read value
+//                textView.text = "Failed to read value: ${error.message}"
+//            }
+//        })
 
-                // Iterate over the children of "Workouts" (Chest, Back, Shoulders, etc.)
-                val stringBuilder = StringBuilder()
-                for (workoutTypeSnapshot in snapshot.children) {
-                    val workoutTypeName = workoutTypeSnapshot.key // e.g., "Chest", "Back"
-                    stringBuilder.append("$workoutTypeName:\n")
-
-                    // Now get the list of exercises for this workout type
-                    if (workoutTypeSnapshot.value is List<*>) {
-                        val exercises = workoutTypeSnapshot.getValue(List::class.java) as List<String>
-                        for (exercise in exercises) {
-                            stringBuilder.append("  - $exercise\n")
-                        }
-                    }
-                }
-                textView.text = stringBuilder.toString()
-
-            }
-
-            override fun onCancelled(error: DatabaseError) {
-                // Failed to read value
-                textView.text = "Failed to read value: ${error.message}"
-            }
-        })
 
 
-
-        return root
-    }
 
     override fun onDestroyView() {
         super.onDestroyView()
