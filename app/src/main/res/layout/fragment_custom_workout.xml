@@ -75,14 +75,15 @@
     </LinearLayout>
 
     <Button
-        android:id="@+id/buttonShowWorkout"
+        android:id="@+id/btnStartWorkout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Show Workout"
-        app:layout_constraintTop_toBottomOf="@id/spinnerWorkout6"
-        app:layout_constraintStart_toStartOf="parent"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginBottom="120dp"
+        android:text="Start Workout"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="16dp"/>
+        app:layout_constraintStart_toStartOf="parent" />
 
     <!-- TextView to display the formatted workout -->
     <TextView
@@ -90,10 +91,11 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:textSize="18sp"
-        app:layout_constraintTop_toBottomOf="@id/buttonShowWorkout"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         android:layout_marginTop="16dp"/>
+
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>
 

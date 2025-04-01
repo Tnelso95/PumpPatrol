@@ -43,35 +43,3 @@ class WorkoutFragment : Fragment() {
         return view
     }
 }
-
-        //textWorkout = view.findViewById(R.id.text_workout)
-//        btnStart = view.findViewById(R.id.btn_start)
-//        btnStop = view.findViewById(R.id.btn_stop)
-//        btnStart = view.findViewById(R.id.btn_premade_workout)
-//        btnStop = view.findViewById(R.id.btn_custom_workout)
-//
-//        btnStart.setOnClickListener {
-//            running = true
-//            handler.post(runnable)
-//        }
-//
-//        btnStop.setOnClickListener {
-//            running = false
-//            handler.removeCallbacks(runnable)
-//        }
-//
-//        return view
-//    }
-//
-//    private val runnable = object : Runnable {
-//        override fun run() {
-//            if (running) {
-//                seconds++
-//                val minutes = seconds / 60
-//                val secs = seconds % 60
-//                textWorkout.text = String.format("%02d:%02d", minutes, secs)
-//                handler.postDelayed(this, 1000)
-//            }
-//        }
-//    }
-//}

@@ -26,6 +26,10 @@ class CustomWorkoutFragment : Fragment() {
     private val database = Firebase.database
     private val myRef = database.getReference("Workouts")
 
+//    private var selectedMuscle1: String? = null
+//    private var selectedMuscle2: String? = null
+//    private var selectedExercises = ArrayList<String>()
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -38,56 +42,6 @@ class CustomWorkoutFragment : Fragment() {
         val root: View = binding.root
 
 
-//        val bodyParts = WorkoutData.workouts.keys.toList()
-//
-//        // Create adapter for the body parts spinners
-//        val bodyPartAdapter = ArrayAdapter(requireContext(), R.layout.simple_spinner_item, bodyParts)
-//        bodyPartAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-//
-//        // Set up the two body part spinners
-//        binding.spinnerBodyPart1.adapter = bodyPartAdapter
-//        binding.spinnerBodyPart2.adapter = bodyPartAdapter
-//
-//        // When a body part is selected in the first spinner, update its workouts
-//        binding.spinnerBodyPart1.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-//            override fun onItemSelected(
-//                parent: AdapterView<*>, view: View?, position: Int, id: Long
-//            ) {
-//                val selectedBodyPart = bodyParts[position]
-//                val workouts = WorkoutData.getWorkoutsByCategory(selectedBodyPart) ?: emptyList()
-//
-//                // Create an adapter for the workouts spinners for first body part
-//                val workoutAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, workouts)
-//                workoutAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-//
-//                // Assuming you want three workout selections for the chosen body part:
-//                //val stringBuilder = StringBuilder()
-//                binding.spinnerWorkout1.adapter = workoutAdapter
-//                binding.spinnerWorkout2.adapter = workoutAdapter
-//                binding.spinnerWorkout3.adapter = workoutAdapter
-//            }
-//            override fun onNothingSelected(parent: AdapterView<*>) {}
-//        }
-//
-//        // When a body part is selected in the second spinner, update its workouts
-//        binding.spinnerBodyPart2.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-//            override fun onItemSelected(
-//                parent: AdapterView<*>, view: View?, position: Int, id: Long
-//            ) {
-//                val selectedBodyPart = bodyParts[position]
-//                val workouts = WorkoutData.getWorkoutsByCategory(selectedBodyPart) ?: emptyList()
-//
-//                // Create an adapter for the workouts spinners for second body part
-//                val workoutAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, workouts)
-//                workoutAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-//
-//                // Set the adapter for the three workout spinners for the second body part:
-//                binding.spinnerWorkout4.adapter = workoutAdapter
-//                binding.spinnerWorkout5.adapter = workoutAdapter
-//                binding.spinnerWorkout6.adapter = workoutAdapter
-//            }
-//            override fun onNothingSelected(parent: AdapterView<*>) {}
-//        }
 
         // Get muscle groups from your dataset
         val muscleGroups = WorkoutData.workouts.keys.toList()
@@ -177,6 +131,10 @@ class CustomWorkoutFragment : Fragment() {
             override fun onNothingSelected(parent: AdapterView<*>) {}
         }
 
+//        binding.btnStartCustomWorkout.setOnClickListener {
+//            fetchExercisesAndStartWorkout()
+//        }
+
         return root
     }
 
@@ -217,6 +175,34 @@ class CustomWorkoutFragment : Fragment() {
         adapter6.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         binding.spinnerWorkout6.adapter = adapter6
     }
+
+//    private fun fetchExercisesAndStartWorkout() {
+//        selectedExercises.clear()
+//
+//        val bundle = Bundle()
+//        val exercisesRef = database.getReference("Workouts")
+//
+//        exercisesRef.addListenerForSingleValueEvent(object : ValueEventListener {
+//            override fun onDataChange(snapshot: DataSnapshot) {
+//                selectedMuscle1?.let { muscle ->
+//                    val exercises = snapshot.child(muscle).children.mapNotNull { it.getValue(String::class.java) }.take(3)
+//                    selectedExercises.addAll(exercises)
+//                }
+//                selectedMuscle2?.let { muscle ->
+//                    val exercises = snapshot.child(muscle).children.mapNotNull { it.getValue(String::class.java) }.take(3)
+//                    selectedExercises.addAll(exercises)
+//                }
+//
+//                bundle.putStringArrayList("exercise_list", selectedExercises)
+//
+//                //findNavController().navigate(R.id.action_customWorkout_to_workoutSessionFragment, bundle)
+//            }
+//
+//            override fun onCancelled(error: DatabaseError) {
+//                // Handle the error (optional: show a Toast message)
+//            }
+//        })
+//    }
 
     override fun onDestroyView() {
         super.onDestroyView()

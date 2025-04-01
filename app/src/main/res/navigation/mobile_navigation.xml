@@ -30,12 +30,30 @@
     android:id="@+id/premadeWorkoutFragment"
     android:name="com.example.pumppatrol.ui.workout.PremadeWorkoutFragment"
     tools:layout="@layout/fragment_premade_workout"
-    android:label="Pre-Made Workout" />
+    android:label="Pre-Made Workout" >
+        <action
+            android:id="@+id/action_workoutOptions_to_workoutSessionFragment"
+
+            app:destination="@id/workoutSessionFragment" />
+    </fragment>
+
+
+    <fragment
+    android:id="@+id/workoutSessionFragment"
+    android:name="com.example.pumppatrol.ui.workout.WorkoutSessionFragment"
+    android:label="Workout Session" />
+
 
     <fragment
     android:id="@+id/customWorkoutFragment"
     android:name="com.example.pumppatrol.ui.workout.CustomWorkoutFragment"
-    android:label="Custom Workout" />
+    tools:layout="@layout/fragment_custom_workout"
+    android:label="Custom Workout" >
+        <action
+            android:id="@+id/action_workoutOptions_to_workoutSessionFragment"
+
+            app:destination="@id/workoutSessionFragment" />
+    </fragment>
 
     <fragment
         android:id="@+id/navigation_history"
