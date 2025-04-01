@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.View
 import android.widget.Button
 import android.widget.EditText
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.navigation.findNavController
@@ -13,6 +14,10 @@ import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.example.pumppatrol.databinding.ActivityMainBinding
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import java.text.SimpleDateFormat
+import java.util.Calendar
+import java.util.Date
+import java.util.Locale
 
 class MainActivity : AppCompatActivity() {
 
@@ -21,12 +26,10 @@ class MainActivity : AppCompatActivity() {
     private lateinit var passwordInput: EditText
     private lateinit var loginButton: Button
     private lateinit var sharedPreferences: SharedPreferences
+    private lateinit var streakTextView: TextView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-
-
 
         // Initialize SharedPreferences
         sharedPreferences = getSharedPreferences("AppSettings", MODE_PRIVATE)
@@ -40,6 +43,9 @@ class MainActivity : AppCompatActivity() {
         // Inflate and set the view
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        streakTextView = findViewById(R.id.streak_text)
+        loginStreak()
 
         // Apply the correct background
         applyBackground(isDarkMode)
@@ -68,13 +74,10 @@ class MainActivity : AppCompatActivity() {
             val password = passwordInput.text.toString()
 
             if (username.isNotEmpty() && password.isNotEmpty()) {
-                // Save login state in SharedPreferences
                 with(sharedPreferences.edit()) {
                     putBoolean("isLoggedIn", true)
                     apply()
                 }
-
-                // Show main content and hide login page
                 loginLayout.visibility = View.GONE
                 mainContent.visibility = View.VISIBLE
             }
@@ -92,13 +95,10 @@ class MainActivity : AppCompatActivity() {
         navView.setupWithNavController(navController)
     }
 
-
-
     override fun onSupportNavigateUp(): Boolean {
         val navController = findNavController(R.id.nav_host_fragment_activity_main)
         return navController.navigateUp() || super.onSupportNavigateUp()
     }
-
 
     override fun onResume() {
         super.onResume()
@@ -109,5 +109,64 @@ class MainActivity : AppCompatActivity() {
     private fun applyBackground(isDarkMode: Boolean) {
         val backgroundRes = if (isDarkMode) R.drawable.background_dark else R.drawable.background_light
         binding.root.setBackgroundResource(backgroundRes)
+    }
+
+    private fun showStreakPopup(streakCount: Int, badgeMessage: String?) {
+        val alertDialog = android.app.AlertDialog.Builder(this)
+        alertDialog.setTitle("Daily Login Streak")
+
+        var message = "Welcome back! Your streak is now $streakCount days. Keep going! \uD83D\uDD25"
+        if (badgeMessage != null) {
+            message += "\n\n\uD83C\uDFC6 You've earned a badge!\n$badgeMessage"
+        }
+
+        alertDialog.setMessage(message)
+        alertDialog.setPositiveButton("OK") { dialog, _ ->
+            dialog.dismiss()
+        }
+        alertDialog.setCancelable(false)
+        alertDialog.show()
+    }
+
+    private fun loginStreak() {
+        val todayDate = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(Date())
+        val lastLoginDate = sharedPreferences.getString("lastLoginDate", null)
+        var streakCount = sharedPreferences.getInt("streakCount", 0)
+
+        if (lastLoginDate == null) {
+            streakCount = 1
+        } else {
+            val lastDate = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).parse(lastLoginDate)
+            val calendar = Calendar.getInstance()
+            calendar.time = lastDate!!
+            calendar.add(Calendar.DAY_OF_YEAR, 1)
+            val expectedNextLogin = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(calendar.time)
+
+            if (todayDate == expectedNextLogin) {
+                streakCount++
+            } else if (todayDate != lastLoginDate) {
+                streakCount = 1
+            }
+        }
+
+        sharedPreferences.edit()
+            .putString("lastLoginDate", todayDate)
+            .putInt("streakCount", streakCount)
+            .apply()
+
+        val badgeMessage = getBadgeForStreak(streakCount)
+        showStreakPopup(streakCount, badgeMessage)
+    }
+
+    private fun getBadgeForStreak(streakCount: Int): String? {
+        return when (streakCount) {
+            1 -> "\uD83C\uDF89 Welcome to Pump Patrol! Today is only day one, so let's get to work!"
+            10 -> "\uD83D\uDD25 10-Day Streak! You're on fire!"
+            25 -> "\uD83C\uDFC5 25-Day Streak! Nothing can stop you now!"
+            50 -> "\uD83D\uDC8E 50 Days In a Row! You're unstoppable!"
+            100 -> "\uD83C\uDF1F 100 Days! You are an elite exerciser!"
+            365 -> "\uD83D\uDCAA One whole year! No days off, you are officially in G.O.A.T. status!"
+            else -> null
+        }
     }
 }
