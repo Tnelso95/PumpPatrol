@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
 import com.example.pumppatrol.databinding.FragmentWorkoutSessionBinding
 import com.google.firebase.database.FirebaseDatabase
 import java.text.SimpleDateFormat
@@ -83,6 +84,13 @@ class WorkoutSessionFragment : Fragment() {
             binding.textCurrentExercise.text = "Workout Complete!"
             isRunning = false // Stop the timer
             saveWorkoutTime()
+
+
+            val postWorkoutViewModel = ViewModelProvider(requireActivity()).get(PostWorkoutViewModel::class.java)
+            postWorkoutViewModel.setWorkoutData(exercises, totalTime)
+
+            // Navigate to Post-Workout Summary
+            findNavController().navigate(R.id.action_workoutSessionFragment_to_postWorkoutSummaryFragment)
 
         }
     }
