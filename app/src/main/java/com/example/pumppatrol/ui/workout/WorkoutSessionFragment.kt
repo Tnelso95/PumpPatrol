@@ -13,6 +13,8 @@ import com.google.firebase.database.FirebaseDatabase
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
+import androidx.navigation.fragment.findNavController
+
 
 class WorkoutSessionFragment : Fragment() {
 

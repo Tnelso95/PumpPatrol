@@ -48,16 +48,18 @@
             app:destination="@id/navigation_home"/>
     </fragment>
 
-    <action
-        android:id="@+id/action_workoutSessionFragment_to_postWorkoutSummaryFragment"
-        app:destination="@id/postWorkoutSummaryFragment" />
+
 
 
     <fragment
     android:id="@+id/workoutSessionFragment"
     android:name="com.example.pumppatrol.ui.workout.WorkoutSessionFragment"
-    android:label="Workout Session" />
+    android:label="Workout Session">
+    <action
+        android:id="@+id/action_workoutSessionFragment_to_postWorkoutSummaryFragment"
+        app:destination="@id/postWorkoutSummaryFragment" />
 
+    </fragment>
 
     <fragment
     android:id="@+id/customWorkoutFragment"

@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.example.pumppatrol.R
@@ -18,6 +19,7 @@ import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import com.example.pumppatrol.adapters.WorkoutAdapter
+import com.example.pumppatrol.databinding.FragmentPostWorkoutSummaryBinding
 
 class PostWorkoutSummaryFragment : Fragment() {
 
@@ -34,7 +36,13 @@ class PostWorkoutSummaryFragment : Fragment() {
 
         postWorkoutViewModel.workoutSummary.observe(viewLifecycleOwner) { summary ->
             binding.textSummary.text = summary
+
+            binding.btnFinish.setOnClickListener {
+                findNavController().navigate(R.id.navigation_home)
+            }
         }
+
+
 
         return root
     }
