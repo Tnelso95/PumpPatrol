@@ -1,0 +1,46 @@
+package com.example.pumppatrol.ui.workout
+
+import android.os.Bundle
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.widget.Button
+import android.widget.TextView
+import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
+import com.example.pumppatrol.R
+import com.example.pumppatrol.databinding.FragmentPremadeWorkoutBinding
+import com.example.pumppatrol.ui.home.HomeViewModel
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.ValueEventListener
+import com.google.firebase.database.ktx.database
+import com.google.firebase.ktx.Firebase
+import com.example.pumppatrol.adapters.WorkoutAdapter
+
+class PostWorkoutSummaryFragment : Fragment() {
+
+    private var _binding: FragmentPostWorkoutSummaryBinding? = null
+    private val binding get() = _binding!!
+    private val postWorkoutViewModel: PostWorkoutViewModel by viewModels()
+
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        _binding = FragmentPostWorkoutSummaryBinding.inflate(inflater, container, false)
+        val root: View = binding.root
+
+        postWorkoutViewModel.workoutSummary.observe(viewLifecycleOwner) { summary ->
+            binding.textSummary.text = summary
+        }
+
+        return root
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
+}
