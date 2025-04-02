@@ -8,8 +8,10 @@ import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.TextView
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
 import com.example.pumppatrol.databinding.FragmentCustomWorkoutBinding
 import com.example.pumppatrol.ui.home.HomeViewModel
 import com.google.firebase.database.DataSnapshot
@@ -127,13 +129,78 @@ class CustomWorkoutFragment : Fragment() {
                     adapter6.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
                     binding.spinnerWorkout6.adapter = adapter6
                 }
+
+
             }
+
+
             override fun onNothingSelected(parent: AdapterView<*>) {}
         }
 
-//        binding.btnStartCustomWorkout.setOnClickListener {
-//            fetchExercisesAndStartWorkout()
-//        }
+
+
+        binding.btnStartWorkout.setOnClickListener {
+            val selectedWorkouts = mutableListOf<String>()
+            var incomplete = false
+
+//            // Retrieve selected workouts if they are not default values
+//            listOf(
+//                binding.spinnerWorkout1, binding.spinnerWorkout2, binding.spinnerWorkout3,
+//                binding.spinnerWorkout4, binding.spinnerWorkout5, binding.spinnerWorkout6
+//            ).forEach { spinner ->
+//                val selectedItem = spinner.selectedItem.toString()
+//                if (!selectedItem.startsWith("Workout")) {  // Ignore default titles
+//                    selectedWorkouts.add(selectedItem)
+//                }
+//            }
+            listOf(
+                binding.spinnerWorkout1, binding.spinnerWorkout2, binding.spinnerWorkout3,
+                binding.spinnerWorkout4, binding.spinnerWorkout5, binding.spinnerWorkout6
+            ).forEach { spinner ->
+                val selectedItem = spinner.selectedItem.toString()
+                if (selectedItem.startsWith("Workout")) {  // Check for default titles
+                    incomplete = true
+                    return@forEach // Use return@forEach to continue to the next iteration
+                }
+                selectedWorkouts.add(selectedItem)
+            }
+
+            if (incomplete) {
+                Toast.makeText(requireContext(), "Custom workout not complete. Please select all workouts.", Toast.LENGTH_SHORT).show()
+            } else {
+                // Create a bundle and pass the selected workouts
+                val bundle = Bundle().apply {
+                    putStringArrayList("exercise_list", ArrayList(selectedWorkouts))
+                }
+
+                findNavController().navigate(
+                    com.example.pumppatrol.R.id.action_workoutOptions_to_workoutSessionFragment,
+                    bundle
+                )
+            }
+
+
+//            // Create a bundle and pass the selected workouts
+//            val bundle = Bundle().apply {
+//                putStringArrayList("exercise_list", ArrayList(selectedWorkouts))  // Use "exercise_list" to match PremadeWorkoutFragment
+//            }
+//
+//            findNavController().navigate(
+//                com.example.pumppatrol.R.id.action_workoutOptions_to_workoutSessionFragment,
+//                bundle
+//            )
+        }
+
+        val stringBuilder = StringBuilder()
+
+        // Ensure text is set properly
+        binding.textCustom.text = stringBuilder.toString()
+
+        fun onCancelled(error: DatabaseError) {
+            binding.textCustom.text = "Failed to read value: ${error.message}"
+        }
+
+
 
         return root
     }
@@ -176,33 +243,6 @@ class CustomWorkoutFragment : Fragment() {
         binding.spinnerWorkout6.adapter = adapter6
     }
 
-//    private fun fetchExercisesAndStartWorkout() {
-//        selectedExercises.clear()
-//
-//        val bundle = Bundle()
-//        val exercisesRef = database.getReference("Workouts")
-//
-//        exercisesRef.addListenerForSingleValueEvent(object : ValueEventListener {
-//            override fun onDataChange(snapshot: DataSnapshot) {
-//                selectedMuscle1?.let { muscle ->
-//                    val exercises = snapshot.child(muscle).children.mapNotNull { it.getValue(String::class.java) }.take(3)
-//                    selectedExercises.addAll(exercises)
-//                }
-//                selectedMuscle2?.let { muscle ->
-//                    val exercises = snapshot.child(muscle).children.mapNotNull { it.getValue(String::class.java) }.take(3)
-//                    selectedExercises.addAll(exercises)
-//                }
-//
-//                bundle.putStringArrayList("exercise_list", selectedExercises)
-//
-//                //findNavController().navigate(R.id.action_customWorkout_to_workoutSessionFragment, bundle)
-//            }
-//
-//            override fun onCancelled(error: DatabaseError) {
-//                // Handle the error (optional: show a Toast message)
-//            }
-//        })
-//    }
 
     override fun onDestroyView() {
         super.onDestroyView()
