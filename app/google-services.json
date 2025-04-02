@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "710633090099",
+    "firebase_url": "https://pumppatrol-59fb1-default-rtdb.firebaseio.com",
+    "project_id": "pumppatrol-59fb1",
+    "storage_bucket": "pumppatrol-59fb1.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:710633090099:android:848788499e61980c700746",
+        "android_client_info": {
+          "package_name": "com.example.pumppatrol"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBjpjf-AiRN8IUTjiOBF4YfUZO9zhwNMDE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
