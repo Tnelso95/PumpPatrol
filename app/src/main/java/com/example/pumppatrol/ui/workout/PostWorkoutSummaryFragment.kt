@@ -34,13 +34,13 @@ class PostWorkoutSummaryFragment : Fragment() {
         _binding = FragmentPostWorkoutSummaryBinding.inflate(inflater, container, false)
         val root: View = binding.root
 
-        postWorkoutViewModel.workoutSummary.observe(viewLifecycleOwner) { summary ->
-            binding.textSummary.text = summary
+       // postWorkoutViewModel.workoutSummary.observe(viewLifecycleOwner) { summary ->
+        //    binding.textSummary.text = summary
 
-            binding.btnFinish.setOnClickListener {
-                findNavController().navigate(R.id.navigation_home)
-            }
-        }
+            //    binding.btnFinish.setOnClickListener {
+          //      findNavController().navigate(R.id.navigation_home)
+        //    }
+      //  }
 
 
 

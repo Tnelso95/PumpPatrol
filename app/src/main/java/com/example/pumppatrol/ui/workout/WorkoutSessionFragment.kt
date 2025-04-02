@@ -14,6 +14,8 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 import androidx.navigation.fragment.findNavController
+import com.example.pumppatrol.R
+
 
 
 class WorkoutSessionFragment : Fragment() {
