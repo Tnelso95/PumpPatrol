@@ -34,7 +34,7 @@
             android:id="@+id/textWorkoutTime"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Workout Time: 10:00"
+            android:text="Workout Time: 30:00"
             android:textSize="18sp"
             android:textStyle="bold" />
 
