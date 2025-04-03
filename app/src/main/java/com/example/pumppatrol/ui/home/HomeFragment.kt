@@ -19,7 +19,7 @@ class HomeFragment : Fragment() {
     private var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding!!
 
-    // Full list of missions
+    // Full list of missions, now paired with a boolean to track completion
     private val allMissions = mutableListOf(
         "Complete 5 Push-ups", "Run 1 Mile", "Do 20 Squats", "Hold a 30s Plank",
         "Do 10 Burpees", "Jump Rope for 2 Minutes", "Bike for 3 Miles", "Walk 5,000 Steps",
@@ -29,29 +29,42 @@ class HomeFragment : Fragment() {
         "Run Up and Down Stairs for 2 Minutes", "Do 25 Calf Raises"
     )
 
-    private var availableMissions = allMissions.toMutableList() // Track remaining missions
-    private var currentMission: String? = null // Track active mission
+    private var availableMissions = allMissions.map { it to false }.toMutableList() // Pair<String, Boolean>
+    private var currentMission: String? = null
+    private var completedMissionsCount = 0 // Track the number of completed missions
+
+    // Achievements List
+    private val achievementsList = mutableListOf<String>()
+
+    private val achievementsThresholds = listOf(
+        1 to "First Mission Completed",
+        10 to "10 Missions Completed",
+        50 to "50 Missions Completed",
+        10 to "Ran 10 Miles Total", // You can track specific missions for distance, e.g. running 1 mile
+        100 to "Performed 100 Push-ups", // Track push-up related missions
+        20 to "Completed All Missions" // Track total completed missions
+    )
 
     override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
         val root: View = binding.root
 
         val showMissionsButton: Button = binding.showMissionsButton
         val selectedMissionText: TextView = binding.selectedMissionText
         val completeMissionButton: Button = binding.completeMissionButton
+        val achievementsButton: Button = binding.achievementsButton
 
-        // Show BottomSheetDialog to select mission
         showMissionsButton.setOnClickListener {
             showMissionsBottomSheet(selectedMissionText, completeMissionButton)
         }
 
-        // Handle mission completion
         completeMissionButton.setOnClickListener {
             completeMission(selectedMissionText, completeMissionButton)
+        }
+
+        achievementsButton.setOnClickListener {
+            showAchievementsBottomSheet()
         }
 
         return root
@@ -59,8 +72,7 @@ class HomeFragment : Fragment() {
 
     private fun showMissionsBottomSheet(missionTextView: TextView, completeButton: Button) {
         if (availableMissions.isEmpty()) {
-            // Reset missions if all have been completed
-            availableMissions = allMissions.toMutableList()
+            availableMissions = allMissions.map { it to false }.toMutableList() // Reset missions
             Toast.makeText(requireContext(), "All missions completed! Resetting list.", Toast.LENGTH_SHORT).show()
         }
 
@@ -68,11 +80,20 @@ class HomeFragment : Fragment() {
         val view = layoutInflater.inflate(R.layout.bottom_sheet_missions, null)
         val listView: ListView = view.findViewById(R.id.missionsListView)
 
-        val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_list_item_1, availableMissions)
+        // Custom adapter to display missions with checkmarks for completed ones
+        val adapter = object : ArrayAdapter<Pair<String, Boolean>>(requireContext(), android.R.layout.simple_list_item_1, availableMissions) {
+            override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
+                val view = super.getView(position, convertView, parent) as TextView
+                val (mission, completed) = availableMissions[position]
+                view.text = if (completed) "✅ $mission" else mission // Add checkmark if completed
+                return view
+            }
+        }
+
         listView.adapter = adapter
 
         listView.setOnItemClickListener { _, _, position, _ ->
-            val selectedMission = availableMissions[position]
+            val selectedMission = availableMissions[position].first
             currentMission = selectedMission
             missionTextView.text = selectedMission
             missionTextView.visibility = View.VISIBLE
@@ -84,12 +105,57 @@ class HomeFragment : Fragment() {
         dialog.show()
     }
 
+    private fun showAchievementsBottomSheet() {
+        val dialog = BottomSheetDialog(requireContext())
+        val view = layoutInflater.inflate(R.layout.bottom_sheet_achievements, null)
+        val listView: ListView = view.findViewById(R.id.achievementsListView)
+
+        // Refresh achievements list
+        achievementsList.clear()
+        checkAchievements()
+
+        val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_list_item_1, achievementsList)
+        listView.adapter = adapter
+
+        listView.setOnItemClickListener { _, _, position, _ ->
+            val selectedAchievement = achievementsList[position]
+            Toast.makeText(requireContext(), "Achievement: $selectedAchievement", Toast.LENGTH_SHORT).show()
+            dialog.dismiss()
+        }
+
+        dialog.setContentView(view)
+        dialog.show()
+    }
+
+    private fun checkAchievements() {
+        // Check if new achievements should be unlocked based on completed missions
+        for ((threshold, achievement) in achievementsThresholds) {
+            if (completedMissionsCount >= threshold && !achievementsList.contains(achievement)) {
+                achievementsList.add(achievement)
+            }
+        }
+    }
+
     private fun completeMission(missionTextView: TextView, completeButton: Button) {
         if (currentMission != null) {
-            availableMissions.remove(currentMission) // Remove completed mission
-            Toast.makeText(requireContext(), "Mission Completed! Select a new one.", Toast.LENGTH_SHORT).show()
+            // Find the mission in the list and mark it as completed
+            availableMissions = availableMissions.map {
+                if (it.first == currentMission) it.copy(second = true) else it
+            }.toMutableList()
+
+            // Increment completed mission count
+            completedMissionsCount++
+
+            Toast.makeText(requireContext(), "Mission Completed! ✅", Toast.LENGTH_SHORT).show()
+
             missionTextView.text = "No mission selected"
             completeButton.visibility = View.GONE
+
+            // Refresh the missions list to show checkmarks
+            showMissionsBottomSheet(missionTextView, completeButton)
+
+            // Update achievements
+            showAchievementsBottomSheet()
         }
     }
 
@@ -98,5 +164,3 @@ class HomeFragment : Fragment() {
         _binding = null
     }
 }
-
-

@@ -44,10 +44,7 @@ class MainActivity : AppCompatActivity() {
         sharedPreferences = getSharedPreferences("AppSettings", MODE_PRIVATE)
 
         // Apply saved theme preference
-        val isDarkMode = sharedPreferences.getBoolean("DarkMode", false)
-        AppCompatDelegate.setDefaultNightMode(
-            if (isDarkMode) AppCompatDelegate.MODE_NIGHT_YES else AppCompatDelegate.MODE_NIGHT_NO
-        )
+        applyTheme()
 
         // Set up navigation
         val navController = findNavController(R.id.nav_host_fragment_activity_main)
@@ -59,27 +56,16 @@ class MainActivity : AppCompatActivity() {
         val navView: BottomNavigationView = findViewById(R.id.nav_view)
         navView.setupWithNavController(navController)
 
-        // Apply the correct background
-        applyBackground(isDarkMode)
-
         // Initialize UI components
         usernameInput = findViewById(R.id.username_input)
         passwordInput = findViewById(R.id.password_input)
         loginButton = findViewById(R.id.login_button)
-        streakTextView = findViewById(R.id.streak_text)
 
         val loginLayout = findViewById<View>(R.id.login_layout)
         val mainContent = findViewById<View>(R.id.main_content)
 
         // Check login state
-        val isLoggedIn = sharedPreferences.getBoolean("isLoggedIn", false)
-        if (isLoggedIn) {
-            loginLayout.visibility = View.GONE
-            mainContent.visibility = View.VISIBLE
-        } else {
-            loginLayout.visibility = View.VISIBLE
-            mainContent.visibility = View.GONE
-        }
+        checkLoginState(loginLayout, mainContent)
 
         // Handle login button click
         loginButton.setOnClickListener {
@@ -93,38 +79,29 @@ class MainActivity : AppCompatActivity() {
                 }
                 loginLayout.visibility = View.GONE
                 mainContent.visibility = View.VISIBLE
+                loginStreak() // Update login streak after successful login
             }
         }
-
-        // Track login streak
-        loginStreak()
     }
 
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        menuInflater.inflate(R.menu.menu_main, menu)
-        return true
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return when (item.itemId) {
-            R.id.action_settings -> {
-                val navController = findNavController(R.id.nav_host_fragment_activity_main)
-                navController.navigate(R.id.navigation_settings)
-                true
-            }
-            else -> super.onOptionsItemSelected(item)
-        }
-    }
-
-    override fun onSupportNavigateUp(): Boolean {
-        val navController = findNavController(R.id.nav_host_fragment_activity_main)
-        return navController.navigateUp() || super.onSupportNavigateUp()
-    }
-
-    override fun onResume() {
-        super.onResume()
+    private fun applyTheme() {
         val isDarkMode = sharedPreferences.getBoolean("DarkMode", false)
+        AppCompatDelegate.setDefaultNightMode(
+            if (isDarkMode) AppCompatDelegate.MODE_NIGHT_YES else AppCompatDelegate.MODE_NIGHT_NO
+        )
         applyBackground(isDarkMode)
+    }
+
+    private fun checkLoginState(loginLayout: View, mainContent: View) {
+        val isLoggedIn = sharedPreferences.getBoolean("isLoggedIn", false)
+        if (isLoggedIn) {
+            loginLayout.visibility = View.GONE
+            mainContent.visibility = View.VISIBLE
+            loginStreak() // Update streak on resume if logged in
+        } else {
+            loginLayout.visibility = View.VISIBLE
+            mainContent.visibility = View.GONE
+        }
     }
 
     private fun applyBackground(isDarkMode: Boolean) {
@@ -187,5 +164,37 @@ class MainActivity : AppCompatActivity() {
             365 -> "\uD83D\uDCAA One whole year! No days off, you are officially in G.O.A.T. status!"
             else -> null
         }
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.menu_main, menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            R.id.action_settings -> {
+                val navController = findNavController(R.id.nav_host_fragment_activity_main)
+                navController.navigate(R.id.navigation_settings)
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
+    }
+
+    override fun onSupportNavigateUp(): Boolean {
+        val navController = findNavController(R.id.nav_host_fragment_activity_main)
+        return navController.navigateUp() || super.onSupportNavigateUp()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        // Apply theme on resume
+        applyTheme()
+
+        // Re-check login state and update UI accordingly
+        val loginLayout = findViewById<View>(R.id.login_layout)
+        val mainContent = findViewById<View>(R.id.main_content)
+        checkLoginState(loginLayout, mainContent)
     }
 }
