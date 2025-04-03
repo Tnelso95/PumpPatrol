@@ -34,6 +34,15 @@ class PostWorkoutSummaryFragment : Fragment() {
         _binding = FragmentPostWorkoutSummaryBinding.inflate(inflater, container, false)
         val root: View = binding.root
 
+//        val btnFinish = view.findViewById<Button>(R.id.btnFinish)
+//
+//        btnFinish.setOnClickListener {
+//            findNavController().navigate(R.id.action_postWorkoutSummaryFragment_to_navigation_home)
+//        }
+        binding.btnFinish.setOnClickListener {
+            findNavController().navigate(R.id.action_postWorkoutSummaryFragment_to_navigation_workout)
+        }
+
        // postWorkoutViewModel.workoutSummary.observe(viewLifecycleOwner) { summary ->
         //    binding.textSummary.text = summary
 

@@ -44,8 +44,8 @@
         android:label="Post Workout Summary"
         tools:layout="@layout/fragment_post_workout_summary">
         <action
-            android:id="@+id/action_postWorkoutSummaryFragment_to_navigation_home"
-            app:destination="@id/navigation_home"/>
+            android:id="@+id/action_postWorkoutSummaryFragment_to_navigation_workout"
+            app:destination="@id/navigation_workout"/>
     </fragment>
 
 
