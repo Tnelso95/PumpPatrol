@@ -5,6 +5,7 @@ import android.os.Handler
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+//import androidx.compose.ui.semantics.text
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.example.pumppatrol.databinding.FragmentWorkoutSessionBinding
@@ -75,10 +76,17 @@ class WorkoutSessionFragment : Fragment() {
         }
     }
 
+    private fun updateExerciseCounter() {
+        val currentExerciseNumber = currentExerciseIndex + 1
+        val totalExercises = exercises.size
+        binding.textExerciseProgress.text = "$currentExerciseNumber/$totalExercises"
+    }
+
     private fun nextExercise() {
         if (currentExerciseIndex < exercises.size - 1) {
             currentExerciseIndex++
             binding.textCurrentExercise.text = exercises[currentExerciseIndex]
+            updateExerciseCounter()
         } else {
             binding.textCurrentExercise.text = "Workout Complete!"
             isRunning = false // Stop the timer
