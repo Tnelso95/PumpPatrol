@@ -1,80 +1,76 @@
-<?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="16dp">
+    android:padding="16dp"
+    android:orientation="vertical"
+    android:background="@color/white">
 
+    <!-- Workout Summary Header -->
+    <TextView
+        android:id="@+id/textSummaryTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Workout Breakdown"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        android:paddingBottom="8dp"/>
+
+    <!-- Summary Container -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:background="@drawable/rounded_box"
+        android:padding="16dp"
+        android:layout_marginBottom="16dp">
 
-        <!-- Workout Summary Title -->
         <TextView
+            android:id="@+id/textWorkoutTime"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Workout Summary"
-            android:textSize="24sp"
-            android:textStyle="bold"
-            android:paddingBottom="16dp" />
-
-        <!-- Total Workout Time -->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Total Workout Time: 00:00"
-            android:textSize="18sp" />
-
-        <!-- Total Weight Lifted -->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Total Weight Lifted: 0 lbs"
-            android:textSize="18sp" />
-
-        <!-- Calories Burned -->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Calories Burned: 0 KCAL"
-            android:textSize="18sp" />
-
-        <!-- Intensity Level -->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Intensity Level: Moderate"
-            android:textSize="18sp" />
-
-        <!-- PR (Personal Records) -->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="New PR: None"
-            android:textSize="18sp" />
-
-        <!-- Workout Type -->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Workout Type: Strength"
-            android:textSize="18sp" />
-
-        <!-- Graphical Elements Placeholder -->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="📊 Progress Comparison (Graph Here)"
+            android:text="Workout Time: --:--"
             android:textSize="18sp"
-            android:textStyle="italic"
-            android:paddingTop="16dp" />
+            android:textStyle="bold" />
 
         <TextView
+            android:id="@+id/textTotalWeight"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="📈 Weight/Reps Over Time (Graph Here)"
-            android:textSize="18sp"
-            android:textStyle="italic"
-            android:paddingTop="8dp" />
+            android:text="Total Weight Lifted: -- lbs"
+            android:textSize="18sp"/>
+
+        <TextView
+            android:id="@+id/textCaloriesBurned"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Calories Burned: -- kcal"
+            android:textSize="18sp"/>
+
+        <TextView
+            android:id="@+id/textIntensity"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Intensity: --"
+            android:textSize="18sp"/>
+
+        <TextView
+            android:id="@+id/textWorkoutType"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Workout Type: --"
+            android:textSize="18sp"/>
     </LinearLayout>
-</ScrollView>
+
+    <!-- Finish Button -->
+    <Button
+        android:id="@+id/btnFinish"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Finish"
+        android:textSize="18sp"
+        android:backgroundTint="@color/teal_700"
+        android:padding="12dp"
+        android:layout_marginTop="16dp"
+        android:background="@drawable/rounded_button"/>
+</LinearLayout>
