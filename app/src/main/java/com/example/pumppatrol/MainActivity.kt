@@ -2,34 +2,43 @@ package com.example.pumppatrol
 
 import android.content.SharedPreferences
 import android.os.Bundle
+import android.view.Menu
+import android.view.MenuItem
 import android.view.View
 import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.appcompat.widget.Toolbar
 import androidx.navigation.findNavController
-import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
+import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupWithNavController
 import com.example.pumppatrol.databinding.ActivityMainBinding
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import java.text.SimpleDateFormat
-import java.util.Calendar
-import java.util.Date
-import java.util.Locale
+import java.util.*
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
+    private lateinit var sharedPreferences: SharedPreferences
+    private lateinit var streakTextView: TextView
     private lateinit var usernameInput: EditText
     private lateinit var passwordInput: EditText
     private lateinit var loginButton: Button
-    private lateinit var sharedPreferences: SharedPreferences
-    private lateinit var streakTextView: TextView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        // Inflate and set the view
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+
+        // Set Toolbar
+        val toolbar: Toolbar = findViewById(R.id.toolbar)
+        setSupportActionBar(toolbar)
 
         // Initialize SharedPreferences
         sharedPreferences = getSharedPreferences("AppSettings", MODE_PRIVATE)
@@ -40,12 +49,15 @@ class MainActivity : AppCompatActivity() {
             if (isDarkMode) AppCompatDelegate.MODE_NIGHT_YES else AppCompatDelegate.MODE_NIGHT_NO
         )
 
-        // Inflate and set the view
-        binding = ActivityMainBinding.inflate(layoutInflater)
-        setContentView(binding.root)
+        // Set up navigation
+        val navController = findNavController(R.id.nav_host_fragment_activity_main)
+        val appBarConfiguration = AppBarConfiguration(
+            setOf(R.id.navigation_home, R.id.navigation_workout, R.id.navigation_history)
+        )
+        setupActionBarWithNavController(navController, appBarConfiguration)
 
-        streakTextView = findViewById(R.id.streak_text)
-        loginStreak()
+        val navView: BottomNavigationView = findViewById(R.id.nav_view)
+        navView.setupWithNavController(navController)
 
         // Apply the correct background
         applyBackground(isDarkMode)
@@ -54,11 +66,12 @@ class MainActivity : AppCompatActivity() {
         usernameInput = findViewById(R.id.username_input)
         passwordInput = findViewById(R.id.password_input)
         loginButton = findViewById(R.id.login_button)
+        streakTextView = findViewById(R.id.streak_text)
 
         val loginLayout = findViewById<View>(R.id.login_layout)
         val mainContent = findViewById<View>(R.id.main_content)
 
-        // Check login state before setting visibility
+        // Check login state
         val isLoggedIn = sharedPreferences.getBoolean("isLoggedIn", false)
         if (isLoggedIn) {
             loginLayout.visibility = View.GONE
@@ -83,16 +96,24 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        // Navigation setup
-        val navView: BottomNavigationView = findViewById(R.id.nav_view)
-        val navController = findNavController(R.id.nav_host_fragment_activity_main)
-        val appBarConfiguration = AppBarConfiguration(
-            setOf(
-                R.id.navigation_home, R.id.navigation_workout, R.id.navigation_history, R.id.navigation_settings
-            )
-        )
-        setupActionBarWithNavController(navController, appBarConfiguration)
-        navView.setupWithNavController(navController)
+        // Track login streak
+        loginStreak()
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.menu_main, menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            R.id.action_settings -> {
+                val navController = findNavController(R.id.nav_host_fragment_activity_main)
+                navController.navigate(R.id.navigation_settings)
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
     }
 
     override fun onSupportNavigateUp(): Boolean {
@@ -121,9 +142,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         alertDialog.setMessage(message)
-        alertDialog.setPositiveButton("OK") { dialog, _ ->
-            dialog.dismiss()
-        }
+        alertDialog.setPositiveButton("OK") { dialog, _ -> dialog.dismiss() }
         alertDialog.setCancelable(false)
         alertDialog.show()
     }
