@@ -34,7 +34,7 @@
             android:id="@+id/textWorkoutTime"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Workout Time: --:--"
+            android:text="Workout Time: 10:00"
             android:textSize="18sp"
             android:textStyle="bold" />
 
@@ -42,28 +42,28 @@
             android:id="@+id/textTotalWeight"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Total Weight Lifted: -- lbs"
+            android:text="Total Weight Lifted: 1,000 lbs"
             android:textSize="18sp" />
 
         <TextView
             android:id="@+id/textCaloriesBurned"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Calories Burned: -- kcal"
+            android:text="Calories Burned: 500"
             android:textSize="18sp" />
 
         <TextView
             android:id="@+id/textIntensity"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Intensity: --"
+            android:text="Intensity: Moderate"
             android:textSize="18sp" />
 
         <TextView
             android:id="@+id/textWorkoutType"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Workout Type: --"
+            android:text="Workout Type: Upper Body"
             android:textSize="18sp" />
     </LinearLayout>
 
