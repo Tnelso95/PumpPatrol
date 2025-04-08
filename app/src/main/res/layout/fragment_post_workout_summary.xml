@@ -7,6 +7,18 @@
     android:padding="16dp">
 
     <!-- Header -->
+    <TextView
+        android:id="@+id/textSummaryTitle"
+        android:layout_width="331dp"
+        android:layout_height="103dp"
+        android:paddingBottom="8dp"
+        android:text=" "
+        android:textColor="@android:color/white"
+        android:textSize="30sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <!-- Stats Container -->
     <LinearLayout
@@ -14,22 +26,22 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/textSummaryTitle"
         app:layout_constraintStart_toStartOf="parent"
-        tools:layout_editor_absoluteY="119dp">
+        app:layout_constraintEnd_toEndOf="parent">
 
         <!-- Workout Time -->
         <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="12dp"
-            android:backgroundTint="#1C1C1E"
             app:cardCornerRadius="16dp"
-            app:cardElevation="6dp">
+            app:cardElevation="6dp"
+            android:backgroundTint="#1C1C1E">
 
             <TextView
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="214dp"
                 android:fontFamily="sans-serif-black"
                 android:padding="16dp"
                 android:text="Total Workout Time: 30:00"
@@ -44,9 +56,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="12dp"
-            android:backgroundTint="#1C1C1E"
             app:cardCornerRadius="16dp"
-            app:cardElevation="6dp">
+            app:cardElevation="6dp"
+            android:backgroundTint="#1C1C1E">
 
             <TextView
                 android:layout_width="match_parent"
@@ -63,9 +75,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="12dp"
-            android:backgroundTint="#1C1C1E"
             app:cardCornerRadius="16dp"
-            app:cardElevation="6dp">
+            app:cardElevation="6dp"
+            android:backgroundTint="#1C1C1E">
 
             <TextView
                 android:layout_width="match_parent"
@@ -82,9 +94,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="12dp"
-            android:backgroundTint="#1C1C1E"
             app:cardCornerRadius="16dp"
-            app:cardElevation="6dp">
+            app:cardElevation="6dp"
+            android:backgroundTint="#1C1C1E">
 
             <TextView
                 android:layout_width="match_parent"
@@ -101,9 +113,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="12dp"
-            android:backgroundTint="#1C1C1E"
             app:cardCornerRadius="16dp"
-            app:cardElevation="6dp">
+            app:cardElevation="6dp"
+            android:backgroundTint="#1C1C1E">
 
             <TextView
                 android:layout_width="match_parent"
@@ -125,7 +137,7 @@
         android:text="Finish"
         android:textSize="18sp"
         android:padding="12dp"
-        android:backgroundTint="@color/black"
+        android:backgroundTint="@color/teal_700"
         android:textColor="@android:color/white"
         app:layout_constraintTop_toBottomOf="@id/cardContainer"
         app:layout_constraintBottom_toBottomOf="parent"
