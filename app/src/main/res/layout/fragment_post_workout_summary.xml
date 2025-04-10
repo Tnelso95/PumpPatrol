@@ -80,11 +80,12 @@
             android:backgroundTint="#1C1C1E">
 
             <TextView
+                android:id="@+id/textWaterDrank"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:fontFamily="sans-serif-black"
                 android:padding="16dp"
-                android:text="💧 Total Amount of Water Drank: 1 Gallon"
+                android:text="💧 Total Amount of Water Drank: 0 oz"
                 android:textColor="@android:color/white"
                 android:textSize="18sp" />
         </androidx.cardview.widget.CardView>

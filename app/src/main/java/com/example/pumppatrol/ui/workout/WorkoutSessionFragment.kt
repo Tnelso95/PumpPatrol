@@ -34,7 +34,6 @@ class WorkoutSessionFragment : Fragment() {
     private val hydrationPopupInterval = 5 * 60 * 1000L // 5 minutes
     private var lastPopupTime = 0L
 
-
     private val timerRunnable = object : Runnable {
         override fun run() {
             if (isRunning) {
@@ -47,10 +46,10 @@ class WorkoutSessionFragment : Fragment() {
                 val minutes = (totalTime / 60000).toInt()
                 val seconds = (totalTime % 60000 / 1000).toInt()
                 val hydrationBlocks = (totalTime / hydrationReminderInterval).toInt() + 1
+                hydrationGoal = hydrationBlocks * 10
+
                 binding.textWorkoutTimer.text = String.format("%02d:%02d", minutes, seconds)
 
-                // Hydration logic
-                hydrationGoal = hydrationBlocks * 10
                 val currentProgress = minOf(sipsTaken * 1, hydrationGoal)
                 binding.textHydrationReminder.text = "Hydration: $currentProgress / $hydrationGoal oz"
                 binding.progressHydration.max = hydrationGoal
@@ -125,8 +124,9 @@ class WorkoutSessionFragment : Fragment() {
             isRunning = false
             saveWorkoutTime()
 
+            val totalWaterDrank = sipsTaken // 1 sip = 1 oz
             val postWorkoutViewModel = ViewModelProvider(requireActivity()).get(PostWorkoutViewModel::class.java)
-            postWorkoutViewModel.setWorkoutData(exercises, totalTime)
+            postWorkoutViewModel.setWorkoutData(exercises, totalTime, totalWaterDrank)
 
             findNavController().navigate(R.id.action_workoutSessionFragment_to_postWorkoutSummaryFragment)
         }
@@ -142,7 +142,8 @@ class WorkoutSessionFragment : Fragment() {
         val workoutData = mapOf(
             "title" to workoutTitle,
             "totalTime" to totalTime,
-            "exercises" to exercises
+            "exercises" to exercises,
+            "waterDrankOz" to sipsTaken
         )
 
         myRef.child(workoutTitle).setValue(workoutData)
@@ -159,7 +160,6 @@ class WorkoutSessionFragment : Fragment() {
                 .show()
         }
     }
-
 
     override fun onDestroyView() {
         super.onDestroyView()
