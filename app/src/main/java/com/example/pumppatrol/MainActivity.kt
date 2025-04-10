@@ -121,7 +121,7 @@ class MainActivity : AppCompatActivity() {
         alertDialog.setMessage(message)
         alertDialog.setPositiveButton("OK") { dialog, _ -> dialog.dismiss() }
         alertDialog.setCancelable(false)
-        alertDialog.show()
+        //alertDialog.show()
     }
 
     private fun loginStreak() {

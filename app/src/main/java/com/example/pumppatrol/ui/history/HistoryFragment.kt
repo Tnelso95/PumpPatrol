@@ -1,3 +1,45 @@
+//
+//package com.example.pumppatrol.ui.history
+//
+//import android.os.Bundle
+//import android.view.LayoutInflater
+//import android.view.View
+//import android.view.ViewGroup
+//import android.widget.TextView
+////import androidx.compose.ui.semantics.text
+//import androidx.fragment.app.Fragment
+//import androidx.lifecycle.ViewModelProvider
+//import com.example.pumppatrol.databinding.FragmentHistoryBinding
+//
+//class HistoryFragment : Fragment() {
+//
+//    private var _binding: FragmentHistoryBinding? = null
+//    private val binding get() = _binding!!
+//
+//    override fun onCreateView(
+//        inflater: LayoutInflater,
+//        container: ViewGroup?,
+//        savedInstanceState: Bundle?
+//    ): View {
+//        val historyViewModel =
+//            ViewModelProvider(this).get(HistoryViewModel::class.java)
+//
+//        _binding = FragmentHistoryBinding.inflate(inflater, container, false)
+//        val root: View = binding.root
+//
+//        val textView: TextView = binding.textHistory
+//        historyViewModel.workoutHistory.observe(viewLifecycleOwner) { historyText ->
+//            textView.text = historyText
+//        }
+//        return root
+//    }
+//
+//    override fun onDestroyView() {
+//        super.onDestroyView()
+//        _binding = null
+//    }
+//}
+//
 
 package com.example.pumppatrol.ui.history
 
@@ -5,8 +47,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
-//import androidx.compose.ui.semantics.text
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.example.pumppatrol.databinding.FragmentHistoryBinding
@@ -17,19 +57,15 @@ class HistoryFragment : Fragment() {
     private val binding get() = _binding!!
 
     override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
-        val historyViewModel =
-            ViewModelProvider(this).get(HistoryViewModel::class.java)
+        val historyViewModel = ViewModelProvider(this).get(HistoryViewModel::class.java)
 
         _binding = FragmentHistoryBinding.inflate(inflater, container, false)
         val root: View = binding.root
 
-        val textView: TextView = binding.textHistory
         historyViewModel.workoutHistory.observe(viewLifecycleOwner) { historyText ->
-            textView.text = historyText
+            binding.textHistory.text = historyText
         }
         return root
     }
@@ -39,10 +75,4 @@ class HistoryFragment : Fragment() {
         _binding = null
     }
 }
-
-
-
-
-
-
 

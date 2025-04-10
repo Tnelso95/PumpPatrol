@@ -1,49 +1,66 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
     android:gravity="center"
-    android:padding="16dp"
-    tools:context=".ui.workout.WorkoutSessionFragment">
+    android:padding="16dp">
 
     <!-- Overall Workout Timer -->
     <TextView
         android:id="@+id/textWorkoutTimer"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="20dp"
         android:text="Time: 00:00"
         android:textSize="24sp"
-        android:textStyle="bold"
-        android:layout_marginBottom="20dp" />
+        android:textStyle="bold" />
 
     <!-- Current Exercise Name -->
     <TextView
         android:id="@+id/textCurrentExercise"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="20dp"
         android:text="Exercise: Bench Press"
         android:textSize="22sp"
-        android:textStyle="bold"
-        android:layout_marginBottom="20dp" />
+        android:textStyle="bold" />
 
-    <!-- Progress Indicator (Optional) -->
+    <!-- Set Progress Indicator -->
     <TextView
         android:id="@+id/textExerciseProgress"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Exercise 1/6"
+        android:text="Set 1/3"
         android:textSize="18sp"
         android:layout_marginBottom="20dp" />
 
-    <!-- Next Exercise Button -->
+    <!-- Numerical Input for Weight (no dropdown) -->
+    <EditText
+        android:id="@+id/editTextWeight"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Enter weight"
+        android:inputType="numberDecimal"
+        android:layout_marginBottom="20dp" />
+
+    <!-- Button to record the weight for the current set -->
+    <Button
+        android:id="@+id/btnAddWeight"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Add Weight"
+        android:layout_marginBottom="20dp" />
+
+    <!-- (Optional) Next Exercise Button (can be hidden if not needed) -->
     <Button
         android:id="@+id/btnNextExercise"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Next Exercise"
         android:textSize="18sp"
-        android:padding="10dp" />
+        android:visibility="gone" />
 
 </LinearLayout>
+
