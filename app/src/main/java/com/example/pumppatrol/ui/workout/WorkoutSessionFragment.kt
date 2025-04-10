@@ -57,7 +57,7 @@ class WorkoutSessionFragment : Fragment() {
                 binding.progressHydration.progress = currentProgress
 
                 if (totalTime % hydrationReminderInterval == 0L && totalTime > 0) {
-                    binding.textHydrationReminder.text = "💧 Time to drink 10 oz of water!"
+                    binding.textHydrationReminder.text = "Time to drink 10 oz of water!"
                 }
 
                 handler.postDelayed(this, 1000)
@@ -152,7 +152,7 @@ class WorkoutSessionFragment : Fragment() {
         activity?.let {
             androidx.appcompat.app.AlertDialog.Builder(it)
                 .setTitle("Hydration Reminder 💧")
-                .setMessage("Here is a friendly reminder to keep drinking water!")
+                .setMessage("Here is a friendly reminder to keep drinking water! You should take 10 sips (10 ounces) every 10 minutes!")
                 .setPositiveButton("Got it!") { dialog, _ ->
                     dialog.dismiss()
                 }
