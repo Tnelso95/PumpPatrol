@@ -40,7 +40,6 @@
 //    }
 //}
 //
-
 package com.example.pumppatrol.ui.history
 
 import android.os.Bundle
@@ -57,10 +56,10 @@ class HistoryFragment : Fragment() {
     private val binding get() = _binding!!
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
     ): View {
         val historyViewModel = ViewModelProvider(this).get(HistoryViewModel::class.java)
-
         _binding = FragmentHistoryBinding.inflate(inflater, container, false)
         val root: View = binding.root
 
@@ -75,4 +74,5 @@ class HistoryFragment : Fragment() {
         _binding = null
     }
 }
+
 
