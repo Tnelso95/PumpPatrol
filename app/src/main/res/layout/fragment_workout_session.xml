@@ -28,7 +28,7 @@
         android:textStyle="bold"
         android:layout_marginBottom="20dp" />
 
-    <!-- Progress Indicator (Optional) -->
+    <!-- Progress Indicator -->
     <TextView
         android:id="@+id/textExerciseProgress"
         android:layout_width="wrap_content"
@@ -44,6 +44,34 @@
         android:layout_height="wrap_content"
         android:text="Next Exercise"
         android:textSize="18sp"
-        android:padding="10dp" />
+        android:padding="10dp"
+        android:layout_marginBottom="24dp" />
+
+    <!-- Hydration Reminder -->
+    <TextView
+        android:id="@+id/textHydrationReminder"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Hydration: 0 / 10 oz"
+        android:textSize="18sp"
+        android:layout_marginBottom="8dp" />
+
+    <!-- Hydration Progress Bar -->
+    <ProgressBar
+        android:id="@+id/progressHydration"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="250dp"
+        android:layout_height="wrap_content"
+        android:max="10"
+        android:progress="0"
+        android:progressTint="@android:color/holo_blue_light"
+        android:layout_marginBottom="12dp" />
+
+    <!-- Sip Button -->
+    <Button
+        android:id="@+id/btnSipWater"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="I took a sip!" />
 
 </LinearLayout>

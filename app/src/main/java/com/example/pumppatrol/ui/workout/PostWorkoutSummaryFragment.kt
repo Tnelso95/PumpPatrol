@@ -4,56 +4,42 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
 import android.widget.TextView
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
-import androidx.navigation.fragment.findNavController
-import com.example.pumppatrol.R
-import com.example.pumppatrol.databinding.FragmentPremadeWorkoutBinding
-import com.example.pumppatrol.ui.home.HomeViewModel
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.ValueEventListener
-import com.google.firebase.database.ktx.database
-import com.google.firebase.ktx.Firebase
-import com.example.pumppatrol.adapters.WorkoutAdapter
 import com.example.pumppatrol.databinding.FragmentPostWorkoutSummaryBinding
+import com.example.pumppatrol.R
+
 
 class PostWorkoutSummaryFragment : Fragment() {
 
     private var _binding: FragmentPostWorkoutSummaryBinding? = null
     private val binding get() = _binding!!
-    private val postWorkoutViewModel: PostWorkoutViewModel by viewModels()
+
+    private lateinit var viewModel: PostWorkoutViewModel
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
+        inflater: LayoutInflater,
+        container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentPostWorkoutSummaryBinding.inflate(inflater, container, false)
-        val root: View = binding.root
+        viewModel = ViewModelProvider(requireActivity())[PostWorkoutViewModel::class.java]
 
-//        val btnFinish = view.findViewById<Button>(R.id.btnFinish)
-//
-//        btnFinish.setOnClickListener {
-//            findNavController().navigate(R.id.action_postWorkoutSummaryFragment_to_navigation_home)
-//        }
-        binding.btnFinish.setOnClickListener {
-            findNavController().navigate(R.id.action_postWorkoutSummaryFragment_to_navigation_workout)
+        viewModel.workoutSummary.observe(viewLifecycleOwner) { summary ->
+            // Set the workout time on the first CardView
+            binding.textWorkoutTime.text = summary
         }
 
-       // postWorkoutViewModel.workoutSummary.observe(viewLifecycleOwner) { summary ->
-        //    binding.textSummary.text = summary
+        viewModel.totalWaterDrank.observe(viewLifecycleOwner) { waterOz ->
+            binding.textWaterDrank.text = "💧 Total Amount of Water Drank: ${waterOz} oz"
+        }
 
-            //    binding.btnFinish.setOnClickListener {
-          //      findNavController().navigate(R.id.navigation_home)
-        //    }
-      //  }
+        binding.btnFinish.setOnClickListener {
+            requireActivity().finish() // or navigate to home
+        }
 
-
-
-        return root
+        return binding.root
     }
 
     override fun onDestroyView() {
