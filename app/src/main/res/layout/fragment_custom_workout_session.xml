@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:gravity="center"
+    android:padding="16dp">
+
+    <!-- Overall Workout Timer -->
+    <TextView
+        android:id="@+id/textWorkoutTimer"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="20dp"
+        android:text="Time: 00:00"
+        android:textSize="24sp"
+        android:textStyle="bold" />
+
+    <!-- Current Exercise Name -->
+    <TextView
+        android:id="@+id/textCurrentExercise"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="20dp"
+        android:text="Current Exercise"
+        android:textSize="22sp"
+        android:textStyle="bold" />
+
+    <!-- Set Progress Indicator -->
+    <TextView
+        android:id="@+id/textExerciseProgress"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Set 1/?"
+        android:textSize="18sp"
+        android:layout_marginBottom="20dp" />
+
+    <!-- Numerical Input for Weight (no dropdown) -->
+    <EditText
+        android:id="@+id/editTextWeight"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Enter weight"
+        android:inputType="numberDecimal"
+        android:layout_marginBottom="20dp" />
+
+    <!-- Button to record the weight for the current set -->
+    <Button
+        android:id="@+id/btnAddWeight"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Add Weight"
+        android:layout_marginBottom="20dp" />
+
+    <!-- (Optional) Next Exercise Button (can be hidden if not needed) -->
+    <Button
+        android:id="@+id/btnNextExercise"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Next Exercise"
+        android:textSize="18sp"
+        android:visibility="gone" />
+
+</LinearLayout>
+
