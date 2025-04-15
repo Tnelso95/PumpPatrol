@@ -4,9 +4,12 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.example.pumppatrol.databinding.FragmentPostWorkoutSummaryBinding
+import com.example.pumppatrol.R
+
 
 class PostWorkoutSummaryFragment : Fragment() {
 
@@ -21,10 +24,19 @@ class PostWorkoutSummaryFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentPostWorkoutSummaryBinding.inflate(inflater, container, false)
-        viewModel = ViewModelProvider(requireActivity()).get(PostWorkoutViewModel::class.java)
+        viewModel = ViewModelProvider(requireActivity())[PostWorkoutViewModel::class.java]
 
         viewModel.workoutSummary.observe(viewLifecycleOwner) { summary ->
-            binding.textWorkoutSummary.text = summary
+            // Set the workout time on the first CardView
+            binding.textWorkoutTime.text = summary
+        }
+
+        viewModel.totalWaterDrank.observe(viewLifecycleOwner) { waterOz ->
+            binding.textWaterDrank.text = "💧 Total Amount of Water Drank: ${waterOz} oz"
+        }
+
+        binding.btnFinish.setOnClickListener {
+            requireActivity().finish() // or navigate to home
         }
 
         return binding.root

@@ -13,8 +13,10 @@ class PostWorkoutViewModel : ViewModel() {
     val totalWaterDrank: LiveData<Int> get() = _totalWaterDrank
 
     fun setWorkoutData(exercises: List<String>, totalTime: Long, totalWater: Int) {
-        _workoutSummary.value =
-            "Workout Complete!\nExercises: ${exercises.joinToString(", ")}\nTotal Time: ${totalTime / 1000} seconds"
+        val minutes = (totalTime / 60000).toInt()
+        val seconds = (totalTime % 60000 / 1000).toInt()
+        _workoutSummary.value = "🕒 Total Workout Time: ${String.format("%02d:%02d", minutes, seconds)}"
         _totalWaterDrank.value = totalWater
     }
+
 }
