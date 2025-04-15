@@ -9,6 +9,8 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.example.pumppatrol.databinding.FragmentPostWorkoutSummaryBinding
 import com.example.pumppatrol.R
+import androidx.navigation.fragment.findNavController
+
 
 
 class PostWorkoutSummaryFragment : Fragment() {
@@ -36,7 +38,8 @@ class PostWorkoutSummaryFragment : Fragment() {
         }
 
         binding.btnFinish.setOnClickListener {
-            requireActivity().finish() // or navigate to home
+            val navController = findNavController()
+            navController.navigate(R.id.navigation_home)
         }
 
         return binding.root
