@@ -143,6 +143,16 @@ class CustomWorkoutFragment : Fragment() {
             val selectedWorkouts = mutableListOf<String>()
             var incomplete = false
 
+            val selectedMuscle1 = binding.spinnerBodyPart1.selectedItem.toString()
+            val selectedMuscle2 = binding.spinnerBodyPart2.selectedItem.toString()
+
+            val workoutType = when {
+                selectedMuscle1.startsWith("Select") && selectedMuscle2.startsWith("Select") -> "Custom Workout"
+                selectedMuscle1.startsWith("Select") -> selectedMuscle2
+                selectedMuscle2.startsWith("Select") -> selectedMuscle1
+                else -> "$selectedMuscle1 & $selectedMuscle2"
+            }
+
 //            // Retrieve selected workouts if they are not default values
 //            listOf(
 //                binding.spinnerWorkout1, binding.spinnerWorkout2, binding.spinnerWorkout3,
@@ -171,6 +181,7 @@ class CustomWorkoutFragment : Fragment() {
                 // Create a bundle and pass the selected workouts
                 val bundle = Bundle().apply {
                     putStringArrayList("exercise_list", ArrayList(selectedWorkouts))
+                    putString("workout_type", workoutType)
                 }
 
                 findNavController().navigate(
@@ -189,7 +200,13 @@ class CustomWorkoutFragment : Fragment() {
 //                com.example.pumppatrol.R.id.action_workoutOptions_to_workoutSessionFragment,
 //                bundle
 //            )
+
+
+
         }
+
+
+
 
         val stringBuilder = StringBuilder()
 

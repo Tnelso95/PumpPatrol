@@ -128,7 +128,9 @@ class WorkoutSessionFragment : Fragment() {
             val postWorkoutViewModel = ViewModelProvider(requireActivity()).get(PostWorkoutViewModel::class.java)
             postWorkoutViewModel.setWorkoutData(exercises, totalTime, totalWaterDrank)
 
-            findNavController().navigate(R.id.action_workoutSessionFragment_to_postWorkoutSummaryFragment)
+            val bundle = Bundle()
+            bundle.putString("workout_type", arguments?.getString("workout_type")) // forward workout type
+            findNavController().navigate(R.id.action_workoutSessionFragment_to_postWorkoutSummaryFragment, bundle)
         }
     }
 

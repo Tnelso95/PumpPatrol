@@ -27,6 +27,9 @@ class PostWorkoutSummaryFragment : Fragment() {
     ): View {
         _binding = FragmentPostWorkoutSummaryBinding.inflate(inflater, container, false)
         viewModel = ViewModelProvider(requireActivity())[PostWorkoutViewModel::class.java]
+        val workoutType = arguments?.getString("workout_type") ?: "Workout"
+        binding.textWorkoutType.text = "🏋️ Workout Type: $workoutType"
+
 
         viewModel.workoutSummary.observe(viewLifecycleOwner) { summary ->
             // Set the workout time on the first CardView

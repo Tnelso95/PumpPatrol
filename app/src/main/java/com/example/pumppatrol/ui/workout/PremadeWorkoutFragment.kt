@@ -63,6 +63,8 @@ class PremadeWorkoutFragment : Fragment() {
                 val exerciseList = ArrayList(chestWorkouts + tricepsWorkouts)
                 bundle.putStringArrayList("exercise_list", exerciseList)
 
+                bundle.putString("workout_type", "Chest and Triceps")
+
                 //findNavController().navigate(R.id.action_workoutOptions_to_workoutSessionFragment, bundle)
 
 
