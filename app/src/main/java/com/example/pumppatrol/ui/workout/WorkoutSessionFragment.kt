@@ -124,19 +124,31 @@ class WorkoutSessionFragment : Fragment() {
             return
         }
 
+        val repsInput = binding.editTextReps.text.toString()
+        if (repsInput.isBlank()) {
+            Toast.makeText(requireContext(), "Please enter reps", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        val reps = repsInput.toIntOrNull()
+        if (reps == null) {
+            Toast.makeText(requireContext(), "Invalid reps value", Toast.LENGTH_SHORT).show()
+            return
+        }
+
         // Clear the input field after retrieving its value
         binding.editTextWeight.text.clear()
-
+        binding.editTextReps.text.clear()
         // Record the current set
         val currentExerciseRecord = exerciseRecords[currentExerciseIndex]
-        val setRecord = SetRecord(setNumber = currentSetIndex, weight = weight)
+        val setRecord = SetRecord(setNumber = currentSetIndex, weight, reps)
         currentExerciseRecord.sets.add(setRecord)
 
         if (currentSetIndex < totalSetsPerExercise) {
             currentSetIndex++
             updateSetIndicator()
         } else {
-            Toast.makeText(requireContext(), "Completed ${exercises[currentExerciseIndex]}", Toast.LENGTH_SHORT).show()
+            //Toast.makeText(requireContext(), "Completed ${exercises[currentExerciseIndex]}", Toast.LENGTH_SHORT).show()
 
             // Move to the next exercise if there is one
             if (currentExerciseIndex < exercises.size - 1) {

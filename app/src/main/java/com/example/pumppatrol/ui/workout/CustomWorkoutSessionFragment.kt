@@ -23,12 +23,13 @@ data class SessionItem(
     val exercise: String,
     val setNumber: Int,
     val totalSets: Int
-)
+) : Serializable
 
 data class SessionItemResult(
     val item: SessionItem,
-    val weight: Float
-)
+    val weight: Float,
+    val reps: Int
+) : Serializable
 
 
 class CustomWorkoutSessionFragment : Fragment() {
@@ -144,9 +145,23 @@ class CustomWorkoutSessionFragment : Fragment() {
             Toast.makeText(requireContext(), "Invalid weight value", Toast.LENGTH_SHORT).show()
             return
         }
+
+        val repsInput = binding.editTextReps.text.toString()
+        if (repsInput.isBlank()) {
+            Toast.makeText(requireContext(), "Please enter reps", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        val reps = repsInput.toIntOrNull()
+        if (reps == null) {
+            Toast.makeText(requireContext(), "Invalid reps value", Toast.LENGTH_SHORT).show()
+            return
+        }
+
         binding.editTextWeight.text.clear()
+        binding.editTextReps.text.clear()
         val currentItem = sessionItems[currentSessionIndex]
-        sessionResults.add(SessionItemResult(currentItem, weight))
+        sessionResults.add(SessionItemResult(currentItem, weight, reps))
         currentSessionIndex++
         if (currentSessionIndex < sessionItems.size) {
             displayCurrentSessionItem()
@@ -182,8 +197,9 @@ class CustomWorkoutSessionFragment : Fragment() {
             val record = ExerciseRecord(name = key.second)
             for (item in items) {
                 val result = sessionResults.firstOrNull { it.item == item }
+                val reps = result?.reps ?: 0
                 val weight = result?.weight ?: 0f
-                record.sets.add(SetRecord(item.setNumber, weight))
+                record.sets.add(SetRecord(item.setNumber, weight, reps))
             }
             exerciseRecords.add(record)
         }
@@ -204,3 +220,4 @@ class CustomWorkoutSessionFragment : Fragment() {
         _binding = null
     }
 }
+

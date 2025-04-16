@@ -45,6 +45,15 @@
         android:inputType="numberDecimal"
         android:layout_marginBottom="20dp" />
 
+    <!-- Numerical Input for Reps -->
+    <EditText
+        android:id="@+id/editTextReps"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Enter reps"
+        android:inputType="number"
+        android:layout_marginBottom="20dp" />
+
     <!-- Button to record the weight for the current set -->
     <Button
         android:id="@+id/btnAddWeight"
@@ -52,6 +61,15 @@
         android:layout_height="wrap_content"
         android:text="Add Weight"
         android:layout_marginBottom="20dp" />
+
+
+
+<!--    <Button-->
+<!--        android:id="@+id/btnAddReps"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:text="Add Reps"-->
+<!--        android:layout_marginBottom="20dp" />-->
 
     <!-- (Optional) Next Exercise Button (can be hidden if not needed) -->
     <Button
