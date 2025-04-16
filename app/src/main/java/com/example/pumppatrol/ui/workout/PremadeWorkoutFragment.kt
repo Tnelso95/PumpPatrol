@@ -61,37 +61,6 @@ class PremadeWorkoutFragment : Fragment() {
         // Firebase Listener
         myRef.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
-//                val stringBuilder = StringBuilder()
-////                val chestWorkouts = snapshot.child("Chest").children.mapNotNull { it.getValue(String::class.java) }.take(3)
-////                val tricepsWorkouts = snapshot.child("Triceps").children.mapNotNull { it.getValue(String::class.java) }.take(3)
-//
-//                val bundle = Bundle()
-//                val chestWorkouts = snapshot.child("Chest").children.mapNotNull { it.getValue(String::class.java) }.take(3)
-//                val tricepsWorkouts = snapshot.child("Triceps").children.mapNotNull { it.getValue(String::class.java) }.take(3)
-//
-//                val exerciseList = ArrayList(chestWorkouts + tricepsWorkouts)
-//                bundle.putStringArrayList("exercise_list", exerciseList)
-//
-//                //findNavController().navigate(R.id.action_workoutOptions_to_workoutSessionFragment, bundle)
-//
-//
-//
-//                stringBuilder.append("Chest and Triceps Day:\n\n")
-//
-//                stringBuilder.append("Chest:\n")
-//                chestWorkouts.forEach { stringBuilder.append("  - $it\n") }
-//
-//                stringBuilder.append("\nTriceps:\n")
-//                tricepsWorkouts.forEach { stringBuilder.append("  - $it\n") }
-//
-//                // Ensure text is set properly
-//                binding.textPremade.text = stringBuilder.toString()
-//                // Move navigation to button click
-//                binding.btnStartWorkout.setOnClickListener {
-//                    findNavController().navigate(R.id.action_workoutOptions_to_workoutSessionFragment, bundle)
-//                }
-//
-//            }
 
                 val ssb = SpannableStringBuilder()
 
