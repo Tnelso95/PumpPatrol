@@ -16,6 +16,7 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
+
 // Data class to hold one set's record
 data class SetRecord(
     val setNumber: Int,
@@ -38,6 +39,7 @@ data class WorkoutRecord(
     val exercises: List<ExerciseRecord>
 )
 
+
 class WorkoutSessionFragment : Fragment() {
 
     private var _binding: FragmentWorkoutSessionBinding? = null
@@ -47,6 +49,7 @@ class WorkoutSessionFragment : Fragment() {
     private var currentExerciseIndex = 0
     private var currentSetIndex = 1
     private val totalSetsPerExercise = 3  // You can adjust if needed
+
 
     // List to store records for each exercise
     private val exerciseRecords = mutableListOf<ExerciseRecord>()
@@ -112,6 +115,15 @@ class WorkoutSessionFragment : Fragment() {
             binding.textHydrationReminder.text = "Hydration: $progress / $hydrationGoal oz"
             binding.progressHydration.progress = progress
         }
+
+
+        binding.btnSipWater.setOnClickListener {
+            sipsTaken++
+            val progress = minOf(sipsTaken, hydrationGoal)
+            binding.textHydrationReminder.text = "Hydration: $progress / $hydrationGoal oz"
+            binding.progressHydration.progress = progress
+        }
+
         if (exercises.isNotEmpty()) {
             exerciseRecords.add(ExerciseRecord(name = exercises[currentExerciseIndex]))
             binding.textCurrentExercise.text = exercises[currentExerciseIndex]
@@ -193,6 +205,7 @@ class WorkoutSessionFragment : Fragment() {
     }
 
     private fun saveWorkoutToFirebase() {
+
         val database = FirebaseDatabase.getInstance()
         val myRef = database.getReference("WorkoutHistory")
 

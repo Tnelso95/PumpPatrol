@@ -1,69 +1,133 @@
+<?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="16dp">
 
-    <!-- Workout Summary Header -->
+    <!-- Header -->
     <TextView
         android:id="@+id/textSummaryTitle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="331dp"
+        android:layout_height="103dp"
         android:paddingBottom="8dp"
-        android:text="Workout Breakdown"
-        android:textSize="24sp"
+        android:text=" "
+        android:textColor="@android:color/white"
+        android:textSize="30sp"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <!-- Summary Container -->
+    <!-- Stats Container -->
     <LinearLayout
-        android:layout_width="match_parent"
+        android:id="@+id/cardContainer"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp"
-        android:background="@drawable/rounded_box"
         android:orientation="vertical"
-        android:padding="16dp"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/textSummaryTitle"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/textSummaryTitle">
+        app:layout_constraintEnd_toEndOf="parent">
 
-        <TextView
-            android:id="@+id/textWorkoutTime"
-            android:layout_width="wrap_content"
+        <!-- Workout Time -->
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Workout Time: 30:00"
-            android:textSize="18sp"
-            android:textStyle="bold" />
+            android:layout_marginBottom="12dp"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="6dp"
+            android:backgroundTint="#1C1C1E">
 
-        <TextView
-            android:id="@+id/textTotalWeight"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Total Weight Lifted: 1,000 lbs"
-            android:textSize="18sp" />
+            <TextView
+                android:id="@+id/textWorkoutTime"
+                android:layout_width="match_parent"
+                android:layout_height="214dp"
+                android:fontFamily="sans-serif-black"
+                android:padding="16dp"
+                android:text="Total Workout Time: 30:00"
+                android:textAlignment="center"
+                android:textColor="@android:color/white"
+                android:textSize="50sp"
+                android:typeface="normal" />
+        </androidx.cardview.widget.CardView>
 
-        <TextView
-            android:id="@+id/textCaloriesBurned"
-            android:layout_width="wrap_content"
+        <!-- Total Weight Lifted-->
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Calories Burned: 500"
-            android:textSize="18sp" />
+            android:layout_marginBottom="12dp"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="6dp"
+            android:backgroundTint="#1C1C1E">
 
-        <TextView
-            android:id="@+id/textIntensity"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Intensity: Moderate"
-            android:textSize="18sp" />
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fontFamily="sans-serif-black"
+                android:padding="16dp"
+                android:text="🏋️ Total Weight Lifted: 1,000 lbs"
+                android:textColor="@android:color/white"
+                android:textSize="18sp" />
+        </androidx.cardview.widget.CardView>
 
-        <TextView
-            android:id="@+id/textWorkoutType"
-            android:layout_width="wrap_content"
+        <!-- Water Drank -->
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Workout Type: Upper Body"
-            android:textSize="18sp" />
+            android:layout_marginBottom="12dp"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="6dp"
+            android:backgroundTint="#1C1C1E">
+
+            <TextView
+                android:id="@+id/textWaterDrank"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fontFamily="sans-serif-black"
+                android:padding="16dp"
+                android:text="💧 Total Amount of Water Drank: 0 oz"
+                android:textColor="@android:color/white"
+                android:textSize="18sp" />
+        </androidx.cardview.widget.CardView>
+
+        <!-- Intensity -->
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="12dp"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="6dp"
+            android:backgroundTint="#1C1C1E">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fontFamily="sans-serif-black"
+                android:padding="16dp"
+                android:text="⚡ Intensity: Moderate"
+                android:textColor="@android:color/white"
+                android:textSize="18sp" />
+        </androidx.cardview.widget.CardView>
+
+        <!-- Workout Type -->
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="12dp"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="6dp"
+            android:backgroundTint="#1C1C1E">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fontFamily="sans-serif-black"
+                android:padding="16dp"
+                android:text="📂 Workout Type: Upper Body"
+                android:textColor="@android:color/white"
+                android:textSize="18sp" />
+        </androidx.cardview.widget.CardView>
     </LinearLayout>
 
     <!-- Finish Button -->
@@ -71,15 +135,16 @@
         android:id="@+id/btnFinish"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="148dp"
-        android:background="@drawable/rounded_button"
-        android:backgroundTint="@color/teal_700"
-        android:padding="12dp"
+        android:layout_marginTop="16dp"
         android:text="Finish"
         android:textSize="18sp"
+        android:padding="12dp"
+        android:backgroundTint="@color/teal_700"
+        android:textColor="@android:color/white"
+        app:layout_constraintTop_toBottomOf="@id/cardContainer"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent" />
+        android:background="@drawable/rounded_button" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
