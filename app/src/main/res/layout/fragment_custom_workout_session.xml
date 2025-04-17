@@ -59,7 +59,7 @@
         android:id="@+id/btnAddWeight"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Add Weight"
+        android:text="Next Set"
         android:layout_marginBottom="20dp" />
 
 
