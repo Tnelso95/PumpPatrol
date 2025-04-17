@@ -1,4 +1,3 @@
-
 package com.example.pumppatrol.ui.workout
 
 import android.os.Bundle
@@ -8,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.example.pumppatrol.R
 import com.example.pumppatrol.databinding.FragmentWorkoutSessionBinding
@@ -43,7 +43,6 @@ class WorkoutSessionFragment : Fragment() {
     private var _binding: FragmentWorkoutSessionBinding? = null
     private val binding get() = _binding!!
 
-    // Exercises passed from previous fragment (e.g. from PremadeWorkoutFragment)
     private var exercises: List<String> = listOf()
     private var currentExerciseIndex = 0
     private var currentSetIndex = 1
@@ -53,51 +52,78 @@ class WorkoutSessionFragment : Fragment() {
     private val exerciseRecords = mutableListOf<ExerciseRecord>()
 
     // Timer variables
-    private var totalTime = 0L  // Total elapsed time in milliseconds
+    private var totalTime = 0L
     private var isRunning = false
     private val handler = Handler()
 
-    // Timer runnable to count elapsed time
+    // Hydration tracking
+    private var hydrationGoal = 10
+    private var sipsTaken = 0
+    private val hydrationReminderInterval = 10 * 60 * 1000L // 10 minutes in ms
+    private val hydrationPopupInterval = 5 * 60 * 1000L // 5 minutes
+    private var lastPopupTime = 0L
+
     private val timerRunnable = object : Runnable {
         override fun run() {
             if (isRunning) {
-                totalTime += 1000  // Increase time by 1 second
+                totalTime += 1000
+                if ((totalTime - lastPopupTime) >= hydrationPopupInterval) {
+                    lastPopupTime = totalTime
+                    showHydrationPopup()
+                }
+
                 val minutes = (totalTime / 60000).toInt()
                 val seconds = (totalTime % 60000 / 1000).toInt()
+                val hydrationBlocks = (totalTime / hydrationReminderInterval).toInt() + 1
+                hydrationGoal = hydrationBlocks * 10
+
                 binding.textWorkoutTimer.text = String.format("%02d:%02d", minutes, seconds)
+
+                val currentProgress = minOf(sipsTaken * 1, hydrationGoal)
+                binding.textHydrationReminder.text = "Hydration: $currentProgress / $hydrationGoal oz"
+                binding.progressHydration.max = hydrationGoal
+                binding.progressHydration.progress = currentProgress
+
+                if (totalTime % hydrationReminderInterval == 0L && totalTime > 0) {
+                    binding.textHydrationReminder.text = "Time to drink 10 oz of water!"
+                }
+
                 handler.postDelayed(this, 1000)
             }
         }
     }
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
     ): View {
         _binding = FragmentWorkoutSessionBinding.inflate(inflater, container, false)
         val root: View = binding.root
 
-        // Retrieve exercise names passed from the previous fragment
         arguments?.let {
             exercises = it.getStringArrayList("exercise_list") ?: listOf()
         }
 
-        // Start with the first exercise if available
+
+        binding.btnSipWater.setOnClickListener {
+            sipsTaken++
+            val progress = minOf(sipsTaken, hydrationGoal)
+            binding.textHydrationReminder.text = "Hydration: $progress / $hydrationGoal oz"
+            binding.progressHydration.progress = progress
+        }
         if (exercises.isNotEmpty()) {
             exerciseRecords.add(ExerciseRecord(name = exercises[currentExerciseIndex]))
             binding.textCurrentExercise.text = exercises[currentExerciseIndex]
             updateSetIndicator()
             startTimer()
         }
-
-        // Button to record the weight for the current set
         binding.btnAddWeight.setOnClickListener {
             addWeightForSet()
         }
-
         return root
     }
 
-    // Starts the workout timer
     private fun startTimer() {
         if (!isRunning) {
             isRunning = true
@@ -105,7 +131,6 @@ class WorkoutSessionFragment : Fragment() {
         }
     }
 
-    // Updates the UI indicator for current set progress
     private fun updateSetIndicator() {
         binding.textExerciseProgress.text = "Set $currentSetIndex / $totalSetsPerExercise"
     }
@@ -149,8 +174,6 @@ class WorkoutSessionFragment : Fragment() {
             updateSetIndicator()
         } else {
             //Toast.makeText(requireContext(), "Completed ${exercises[currentExerciseIndex]}", Toast.LENGTH_SHORT).show()
-
-            // Move to the next exercise if there is one
             if (currentExerciseIndex < exercises.size - 1) {
                 currentExerciseIndex++
                 currentSetIndex = 1
@@ -161,6 +184,7 @@ class WorkoutSessionFragment : Fragment() {
                 // If all exercises are done, finish workout
                 binding.textCurrentExercise.text = "Workout Complete!"
                 isRunning = false
+                val totalWaterDrank = sipsTaken // 1 sip = 1 oz
                 handler.removeCallbacks(timerRunnable)
                 saveWorkoutToFirebase()
                 findNavController().navigate(R.id.action_workoutSessionFragment_to_postWorkoutSummaryFragment)
@@ -168,16 +192,13 @@ class WorkoutSessionFragment : Fragment() {
         }
     }
 
-    // Saves the complete workout to Firebase using the new structured format
     private fun saveWorkoutToFirebase() {
         val database = FirebaseDatabase.getInstance()
         val myRef = database.getReference("WorkoutHistory")
 
-        // Create a unique workout title (this will also serve as the workout ID)
         val dateFormat = SimpleDateFormat("yyyy-MM-dd_HH-mm", Locale.getDefault())
         val workoutTitle = "Workout_" + dateFormat.format(Date())
 
-        // Use an ISO8601 date string (or another preferred format)
         val isoDateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.getDefault())
         val dateStr = isoDateFormat.format(Date())
 
@@ -189,8 +210,19 @@ class WorkoutSessionFragment : Fragment() {
             exercises = exerciseRecords
         )
 
-        // Save the workout record under a unique key
         myRef.child(workoutTitle).setValue(workoutRecord)
+    }
+
+    private fun showHydrationPopup() {
+        activity?.let {
+            androidx.appcompat.app.AlertDialog.Builder(it)
+                .setTitle("Hydration Reminder 💧")
+                .setMessage("Here is a friendly reminder to keep drinking water! You should take 10 sips (10 ounces) every 10 minutes!")
+                .setPositiveButton("Got it!") { dialog, _ ->
+                    dialog.dismiss()
+                }
+                .show()
+        }
     }
 
     override fun onDestroyView() {
@@ -200,5 +232,3 @@ class WorkoutSessionFragment : Fragment() {
         _binding = null
     }
 }
-
-
