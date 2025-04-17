@@ -1,251 +1,171 @@
+
 package com.example.pumppatrol.ui.workout
 
-import android.R
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.AdapterView
 import android.widget.ArrayAdapter
-import android.widget.TextView
+import android.widget.EditText
+import android.widget.Spinner
 import android.widget.Toast
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
+import com.example.pumppatrol.R
 import com.example.pumppatrol.databinding.FragmentCustomWorkoutBinding
-import com.example.pumppatrol.ui.home.HomeViewModel
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.ValueEventListener
-import com.google.firebase.database.ktx.database
-import com.google.firebase.ktx.Firebase
+import java.io.Serializable
+
+
+data class CustomExercise(var exercise: String, var sets: Int) : Serializable
+data class MuscleGroupSection(var muscleGroup: String, val exercises: MutableList<CustomExercise>) : Serializable
+
 
 class CustomWorkoutFragment : Fragment() {
 
     private var _binding: FragmentCustomWorkoutBinding? = null
     private val binding get() = _binding!!
 
-    private val database = Firebase.database
-    private val myRef = database.getReference("Workouts")
+    // Replace with your actual data source for muscle groups.
+    private val muscleGroups = WorkoutData.workouts.keys.toList()
 
-//    private var selectedMuscle1: String? = null
-//    private var selectedMuscle2: String? = null
-//    private var selectedExercises = ArrayList<String>()
+    // Returns a list of exercises for a given muscle group.
+    private fun getExercisesForMuscle(muscleGroup: String): List<String> {
+        return WorkoutData.getWorkoutsByCategory(muscleGroup) ?: emptyList()
+    }
 
     override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
-        val customViewModel =
-            ViewModelProvider(this).get(CustomViewModel::class.java)
-
         _binding = FragmentCustomWorkoutBinding.inflate(inflater, container, false)
         val root: View = binding.root
 
+        // Add one muscle group section by default.
+        addMuscleGroupSection()
 
-
-        // Get muscle groups from your dataset
-        val muscleGroups = WorkoutData.workouts.keys.toList()
-
-        // Create lists with a default prompt at the start
-        val bodyParts1 = mutableListOf("Select first muscle group")
-        bodyParts1.addAll(muscleGroups)
-        val bodyParts2 = mutableListOf("Select second muscle group")
-        bodyParts2.addAll(muscleGroups)
-
-        // Create adapters for the body part spinners
-        val bodyPartAdapter1 = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, bodyParts1)
-        bodyPartAdapter1.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-        val bodyPartAdapter2 = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, bodyParts2)
-        bodyPartAdapter2.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-
-        // Set the adapters for the muscle group spinners
-        binding.spinnerBodyPart1.adapter = bodyPartAdapter1
-        binding.spinnerBodyPart2.adapter = bodyPartAdapter2
-
-        // Set default adapters for the workout spinners
-        setDefaultWorkoutAdaptersFirst()
-        setDefaultWorkoutAdaptersSecond()
-
-        // When a muscle group is selected in the first spinner, update its workout spinners
-        binding.spinnerBodyPart1.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(parent: AdapterView<*>, view: View?, position: Int, id: Long) {
-                if (position == 0) {
-                    // Still at default; reset workouts to default text
-                    setDefaultWorkoutAdaptersFirst()
-                } else {
-                    // Adjust for the dummy prompt at index 0
-                    val selectedMuscle = muscleGroups[position - 1]
-                    val workouts = WorkoutData.getWorkoutsByCategory(selectedMuscle) ?: emptyList()
-
-                    // Build adapters that prepend the default title for each workout spinner
-                    val workoutList1 = mutableListOf("Workout 1")
-                    workoutList1.addAll(workouts)
-                    val adapter1 = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, workoutList1)
-                    adapter1.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-                    binding.spinnerWorkout1.adapter = adapter1
-
-                    val workoutList2 = mutableListOf("Workout 2")
-                    workoutList2.addAll(workouts)
-                    val adapter2 = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, workoutList2)
-                    adapter2.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-                    binding.spinnerWorkout2.adapter = adapter2
-
-                    val workoutList3 = mutableListOf("Workout 3")
-                    workoutList3.addAll(workouts)
-                    val adapter3 = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, workoutList3)
-                    adapter3.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-                    binding.spinnerWorkout3.adapter = adapter3
-                }
-            }
-            override fun onNothingSelected(parent: AdapterView<*>) {}
+        // Button to add additional muscle group sections.
+        binding.btnAddMuscleGroup.setOnClickListener {
+            addMuscleGroupSection()
         }
 
-        // When a muscle group is selected in the second spinner, update its workout spinners
-        binding.spinnerBodyPart2.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(parent: AdapterView<*>, view: View?, position: Int, id: Long) {
-                if (position == 0) {
-                    setDefaultWorkoutAdaptersSecond()
-                } else {
-                    val selectedMuscle = muscleGroups[position - 1]
-                    val workouts = WorkoutData.getWorkoutsByCategory(selectedMuscle) ?: emptyList()
-
-                    val workoutList4 = mutableListOf("Workout 1")
-                    workoutList4.addAll(workouts)
-                    val adapter4 = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, workoutList4)
-                    adapter4.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-                    binding.spinnerWorkout4.adapter = adapter4
-
-                    val workoutList5 = mutableListOf("Workout 2")
-                    workoutList5.addAll(workouts)
-                    val adapter5 = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, workoutList5)
-                    adapter5.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-                    binding.spinnerWorkout5.adapter = adapter5
-
-                    val workoutList6 = mutableListOf("Workout 3")
-                    workoutList6.addAll(workouts)
-                    val adapter6 = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, workoutList6)
-                    adapter6.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-                    binding.spinnerWorkout6.adapter = adapter6
-                }
-
-
-            }
-
-
-            override fun onNothingSelected(parent: AdapterView<*>) {}
-        }
-
-
-
+        // When "Start Workout" is clicked, gather configuration and navigate.
         binding.btnStartWorkout.setOnClickListener {
-            val selectedWorkouts = mutableListOf<String>()
-            var incomplete = false
-
-//            // Retrieve selected workouts if they are not default values
-//            listOf(
-//                binding.spinnerWorkout1, binding.spinnerWorkout2, binding.spinnerWorkout3,
-//                binding.spinnerWorkout4, binding.spinnerWorkout5, binding.spinnerWorkout6
-//            ).forEach { spinner ->
-//                val selectedItem = spinner.selectedItem.toString()
-//                if (!selectedItem.startsWith("Workout")) {  // Ignore default titles
-//                    selectedWorkouts.add(selectedItem)
-//                }
-//            }
-            listOf(
-                binding.spinnerWorkout1, binding.spinnerWorkout2, binding.spinnerWorkout3,
-                binding.spinnerWorkout4, binding.spinnerWorkout5, binding.spinnerWorkout6
-            ).forEach { spinner ->
-                val selectedItem = spinner.selectedItem.toString()
-                if (selectedItem.startsWith("Workout")) {  // Check for default titles
-                    incomplete = true
-                    return@forEach // Use return@forEach to continue to the next iteration
-                }
-                selectedWorkouts.add(selectedItem)
-            }
-
-            if (incomplete) {
-                Toast.makeText(requireContext(), "Custom workout not complete. Please select all workouts.", Toast.LENGTH_SHORT).show()
+            val customWorkout = gatherCustomWorkout()
+            if (customWorkout.isEmpty()) {
+                Toast.makeText(context, "Please add at least one exercise", Toast.LENGTH_SHORT).show()
             } else {
-                // Create a bundle and pass the selected workouts
-                val bundle = Bundle().apply {
-                    putStringArrayList("exercise_list", ArrayList(selectedWorkouts))
-                }
-
+                // Prepare bundle with custom workout data
+                val bundle = Bundle()
+                bundle.putSerializable("customWorkoutData", ArrayList(customWorkout))
                 findNavController().navigate(
-                    com.example.pumppatrol.R.id.action_workoutOptions_to_workoutSessionFragment,
+                    R.id.action_customWorkoutFragment_to_customWorkoutSessionFragment,
                     bundle
                 )
             }
-
-
-//            // Create a bundle and pass the selected workouts
-//            val bundle = Bundle().apply {
-//                putStringArrayList("exercise_list", ArrayList(selectedWorkouts))  // Use "exercise_list" to match PremadeWorkoutFragment
-//            }
-//
-//            findNavController().navigate(
-//                com.example.pumppatrol.R.id.action_workoutOptions_to_workoutSessionFragment,
-//                bundle
-//            )
         }
-
-        val stringBuilder = StringBuilder()
-
-        // Ensure text is set properly
-        binding.textCustom.text = stringBuilder.toString()
-
-        fun onCancelled(error: DatabaseError) {
-            binding.textCustom.text = "Failed to read value: ${error.message}"
-        }
-
 
 
         return root
     }
 
-    // Helper function for default workout adapters for the first muscle group spinners
-    private fun setDefaultWorkoutAdaptersFirst() {
-        val defaultList1 = listOf("Workout 1")
-        val defaultList2 = listOf("Workout 2")
-        val defaultList3 = listOf("Workout 3")
+    // Dynamically inflate and add a new muscle group section.
+    private fun addMuscleGroupSection() {
+        val inflater = LayoutInflater.from(requireContext())
+        val muscleGroupView = inflater.inflate(R.layout.layout_muscle_group_section, binding.containerMuscleGroups, false)
+        binding.containerMuscleGroups.addView(muscleGroupView)
 
-        val adapter1 = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, defaultList1)
-        adapter1.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-        binding.spinnerWorkout1.adapter = adapter1
+        // Set up the muscle group spinner.
+        val spinnerMuscleGroup = muscleGroupView.findViewById<Spinner>(R.id.spinnerMuscleGroup)
+        val muscleGroupList = mutableListOf("Select Muscle Group")
+        muscleGroupList.addAll(muscleGroups)
+        val muscleAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, muscleGroupList)
+        muscleAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        spinnerMuscleGroup.adapter = muscleAdapter
 
-        val adapter2 = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, defaultList2)
-        adapter2.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-        binding.spinnerWorkout2.adapter = adapter2
+        // Container for exercise rows.
+        val containerExercises = muscleGroupView.findViewById<ViewGroup>(R.id.containerExercises)
+        // Button to add an exercise row.
+        val btnAddExercise = muscleGroupView.findViewById<View>(R.id.btnAddExercise)
+        btnAddExercise.setOnClickListener {
+            addExerciseRow(containerExercises, spinnerMuscleGroup.selectedItemPosition)
+        }
 
-        val adapter3 = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, defaultList3)
-        adapter3.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-        binding.spinnerWorkout3.adapter = adapter3
+        // Add one default exercise row.
+        addExerciseRow(containerExercises, spinnerMuscleGroup.selectedItemPosition)
+
+        // Update exercise spinners if the muscle group selection changes.
+        spinnerMuscleGroup.onItemSelectedListener = object : android.widget.AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(parent: android.widget.AdapterView<*>, view: View?, position: Int, id: Long) {
+                updateExerciseRowsForMuscle(containerExercises, position)
+            }
+            override fun onNothingSelected(parent: android.widget.AdapterView<*>) {}
+        }
     }
 
-    // Helper function for default workout adapters for the second muscle group spinners
-    private fun setDefaultWorkoutAdaptersSecond() {
-        val defaultList1 = listOf("Workout 1")
-        val defaultList2 = listOf("Workout 2")
-        val defaultList3 = listOf("Workout 3")
-
-        val adapter4 = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, defaultList1)
-        adapter4.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-        binding.spinnerWorkout4.adapter = adapter4
-
-        val adapter5 = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, defaultList2)
-        adapter5.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-        binding.spinnerWorkout5.adapter = adapter5
-
-        val adapter6 = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, defaultList3)
-        adapter6.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-        binding.spinnerWorkout6.adapter = adapter6
+    // Inflate an exercise row inside a given container.
+    private fun addExerciseRow(container: ViewGroup, muscleGroupPosition: Int) {
+        val inflater = LayoutInflater.from(requireContext())
+        val exerciseRow = inflater.inflate(R.layout.layout_exercise_row, container, false)
+        container.addView(exerciseRow)
+        val spinnerExercise = exerciseRow.findViewById<Spinner>(R.id.spinnerExercise)
+        if (muscleGroupPosition > 0) {
+            val selectedMuscle = muscleGroups[muscleGroupPosition - 1]
+            val exercises = getExercisesForMuscle(selectedMuscle)
+            val exerciseAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, exercises)
+            exerciseAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+            spinnerExercise.adapter = exerciseAdapter
+        } else {
+            spinnerExercise.adapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, listOf("Select Muscle Group First"))
+        }
     }
 
+    // Update each exercise row spinner when the muscle group changes.
+    private fun updateExerciseRowsForMuscle(container: ViewGroup, muscleGroupPosition: Int) {
+        val adapter: ArrayAdapter<String> = if (muscleGroupPosition > 0) {
+            val selectedMuscle = muscleGroups[muscleGroupPosition - 1]
+            val exercises = getExercisesForMuscle(selectedMuscle)
+            ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, exercises)
+        } else {
+            ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, listOf("Select Muscle Group First"))
+        }
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        for (i in 0 until container.childCount) {
+            val exerciseRow = container.getChildAt(i)
+            val spinnerExercise = exerciseRow.findViewById<Spinner>(R.id.spinnerExercise)
+            spinnerExercise.adapter = adapter
+        }
+    }
+
+    // Gathers the custom workout configuration.
+    private fun gatherCustomWorkout(): List<MuscleGroupSection> {
+        val customWorkout = mutableListOf<MuscleGroupSection>()
+        for (i in 0 until binding.containerMuscleGroups.childCount) {
+            val muscleGroupView = binding.containerMuscleGroups.getChildAt(i)
+            val spinnerMuscleGroup = muscleGroupView.findViewById<Spinner>(R.id.spinnerMuscleGroup)
+            val selectedMusclePos = spinnerMuscleGroup.selectedItemPosition
+            if (selectedMusclePos <= 0) continue
+            val muscleGroupName = muscleGroups[selectedMusclePos - 1]
+
+            val containerExercises = muscleGroupView.findViewById<ViewGroup>(R.id.containerExercises)
+            val exercisesList = mutableListOf<CustomExercise>()
+            for (j in 0 until containerExercises.childCount) {
+                val exerciseRow = containerExercises.getChildAt(j)
+                val spinnerExercise = exerciseRow.findViewById<Spinner>(R.id.spinnerExercise)
+                val editTextSets = exerciseRow.findViewById<EditText>(R.id.editTextSets)
+                val exerciseName = spinnerExercise.selectedItem?.toString() ?: continue
+                val setsText = editTextSets.text.toString()
+                val sets = setsText.toIntOrNull() ?: 1
+                exercisesList.add(CustomExercise(exerciseName, sets))
+            }
+            if (exercisesList.isNotEmpty()) {
+                customWorkout.add(MuscleGroupSection(muscleGroupName, exercisesList))
+            }
+        }
+        return customWorkout
+    }
 
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
     }
 }
+

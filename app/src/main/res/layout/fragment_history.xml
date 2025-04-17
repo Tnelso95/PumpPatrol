@@ -5,10 +5,20 @@
     android:paddingTop="64dp"
     android:paddingBottom="32dp">
 
-    <TextView
-        android:id="@+id/text_history"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="16dp"
-        android:textSize="16sp" />
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <TextView
+            android:id="@+id/text_history"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="16sp"
+            android:textColor="#333333"
+            android:padding="16dp"
+            android:background="@drawable/history_backround" />
+    </LinearLayout>
 </ScrollView>
+

@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="8dp"
+    android:background="#EEEEEE"
+    android:layout_marginBottom="8dp">
+
+    <!-- Spinner for selecting the muscle group -->
+    <Spinner
+        android:id="@+id/spinnerMuscleGroup"
+        android:layout_width="363dp"
+        android:layout_height="wrap_content" />
+
+    <!-- Container for exercise rows -->
+    <LinearLayout
+        android:id="@+id/containerExercises"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_marginTop="8dp"/>
+
+    <!-- Button to add a new exercise to this muscle group section -->
+    <Button
+        android:id="@+id/btnAddExercise"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Add Exercise"
+        android:layout_marginTop="8dp"/>
+
+</LinearLayout>
