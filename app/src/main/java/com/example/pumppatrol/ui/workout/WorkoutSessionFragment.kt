@@ -2,6 +2,7 @@ package com.example.pumppatrol.ui.workout
 
 import android.os.Bundle
 import android.os.Handler
+import android.os.Parcelable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -15,20 +16,25 @@ import com.google.firebase.database.FirebaseDatabase
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
+import kotlinx.parcelize.Parcelize
+
 
 //Merging with main branch
 // Data class to hold one set's record
+@Parcelize
 data class SetRecord(
     val setNumber: Int,
     val weight: Float,
     val reps: Int = 12  // default to 12 reps
-)
+) : Parcelable
 
 // Data class to hold each exercise's records
+@Parcelize
 data class ExerciseRecord(
     val name: String,
     val sets: MutableList<SetRecord> = mutableListOf()
-)
+) : Parcelable
+
 
 // Data class to hold the entire workout record
 data class WorkoutRecord(
@@ -48,7 +54,7 @@ class WorkoutSessionFragment : Fragment() {
     private var exercises: List<String> = listOf()
     private var currentExerciseIndex = 0
     private var currentSetIndex = 1
-    private val totalSetsPerExercise = 3  // You can adjust if needed
+    private val totalSetsPerExercise = 3
 
 
     // List to store records for each exercise
@@ -199,7 +205,23 @@ class WorkoutSessionFragment : Fragment() {
                 val totalWaterDrank = sipsTaken // 1 sip = 1 oz
                 handler.removeCallbacks(timerRunnable)
                 saveWorkoutToFirebase()
-                findNavController().navigate(R.id.action_workoutSessionFragment_to_postWorkoutSummaryFragment)
+
+                // Total weight lifted calculation
+                var totalWeightLifted = 0f
+                for (exercise in exerciseRecords) {
+                    for (set in exercise.sets) {
+                        totalWeightLifted += set.weight * set.reps
+                    }
+                }
+
+
+                val bundle = Bundle().apply {
+                    putLong("totalTime", totalTime)
+                    putInt("totalWater", sipsTaken)
+                    putFloat("totalWeightLifted", totalWeightLifted)
+                }
+                findNavController().navigate(R.id.action_workoutSessionFragment_to_postWorkoutSummaryFragment, bundle)
+
             }
         }
     }

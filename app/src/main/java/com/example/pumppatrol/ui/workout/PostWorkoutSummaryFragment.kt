@@ -4,46 +4,48 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
 import com.example.pumppatrol.databinding.FragmentPostWorkoutSummaryBinding
-import com.example.pumppatrol.R
-import androidx.navigation.fragment.findNavController
-
-
+import com.example.pumppatrol.ui.workout.ExerciseRecord
+import com.example.pumppatrol.ui.workout.SetRecord
 
 class PostWorkoutSummaryFragment : Fragment() {
 
     private var _binding: FragmentPostWorkoutSummaryBinding? = null
     private val binding get() = _binding!!
 
-    private lateinit var viewModel: PostWorkoutViewModel
+    private var totalTime: Long = 0
+    private var totalWater: Int = 0
+    private lateinit var exerciseRecords: ArrayList<ExerciseRecord>
+
+    private var totalWeightLifted: Float = 0f
 
     override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
+        inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentPostWorkoutSummaryBinding.inflate(inflater, container, false)
-        viewModel = ViewModelProvider(requireActivity())[PostWorkoutViewModel::class.java]
 
-        viewModel.workoutSummary.observe(viewLifecycleOwner) { summary ->
-            // Set the workout time on the first CardView
-            binding.textWorkoutTime.text = summary
+        arguments?.let {
+            totalTime = it.getLong("totalTime")
+            totalWater = it.getInt("totalWater")
+            totalWeightLifted = it.getFloat("totalWeightLifted", 0f)
+            exerciseRecords = it.getParcelableArrayList("exerciseRecords") ?: arrayListOf()
         }
 
-        viewModel.totalWaterDrank.observe(viewLifecycleOwner) { waterOz ->
-            binding.textWaterDrank.text = "💧 Total Amount of Water Drank: ${waterOz} oz"
-        }
-
-        binding.btnFinish.setOnClickListener {
-            val navController = findNavController()
-            navController.navigate(R.id.navigation_home)
-        }
-
+        displayWorkoutSummary()
         return binding.root
     }
+
+    private fun displayWorkoutSummary() {
+        val minutes = (totalTime / 60000).toInt()
+        val seconds = (totalTime % 60000 / 1000).toInt()
+        binding.textWorkoutTime.text = "⌚Total Workout Time: $minutes:$seconds"
+        binding.textWaterDrank.text = "💧Total Water Drank: $totalWater oz"
+        binding.textTotalWeightLifted.text = "💪Total Weight Lifted: ${"%.1f".format(totalWeightLifted)} lbs"
+
+    }
+
 
     override fun onDestroyView() {
         super.onDestroyView()
