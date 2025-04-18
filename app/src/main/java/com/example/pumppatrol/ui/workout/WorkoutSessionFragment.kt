@@ -16,24 +16,24 @@ import com.google.firebase.database.FirebaseDatabase
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
-import kotlinx.parcelize.Parcelize
+
 
 
 //Merging with main branch
 // Data class to hold one set's record
-@Parcelize
+
 data class SetRecord(
     val setNumber: Int,
     val weight: Float,
     val reps: Int = 12  // default to 12 reps
-) : Parcelable
+)
 
 // Data class to hold each exercise's records
-@Parcelize
+
 data class ExerciseRecord(
     val name: String,
     val sets: MutableList<SetRecord> = mutableListOf()
-) : Parcelable
+)
 
 
 // Data class to hold the entire workout record

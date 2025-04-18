@@ -30,7 +30,6 @@ class PostWorkoutSummaryFragment : Fragment() {
             totalTime = it.getLong("totalTime")
             totalWater = it.getInt("totalWater")
             totalWeightLifted = it.getFloat("totalWeightLifted", 0f)
-            exerciseRecords = it.getParcelableArrayList("exerciseRecords") ?: arrayListOf()
         }
 
         displayWorkoutSummary()
