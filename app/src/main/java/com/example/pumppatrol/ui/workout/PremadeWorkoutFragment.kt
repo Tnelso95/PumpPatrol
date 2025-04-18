@@ -177,6 +177,9 @@ class PremadeWorkoutFragment : Fragment() {
                 val bundle = Bundle()
                 val exerciseList = ArrayList(chestWorkouts + tricepsWorkouts)
                 bundle.putStringArrayList("exercise_list", exerciseList)
+                // Add workout type to bundle
+                bundle.putString("workoutType", "Chest and Triceps")
+
 
                 // Start workout on button click
                 binding.btnStartWorkout.setOnClickListener {

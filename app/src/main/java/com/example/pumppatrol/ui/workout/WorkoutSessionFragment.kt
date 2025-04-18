@@ -2,13 +2,11 @@ package com.example.pumppatrol.ui.workout
 
 import android.os.Bundle
 import android.os.Handler
-import android.os.Parcelable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.example.pumppatrol.R
 import com.example.pumppatrol.databinding.FragmentWorkoutSessionBinding
@@ -17,34 +15,26 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
-
-
-//Merging with main branch
-// Data class to hold one set's record
-
 data class SetRecord(
     val setNumber: Int,
     val weight: Float,
-    val reps: Int = 12  // default to 12 reps
+    val reps: Int = 12
 )
-
-// Data class to hold each exercise's records
 
 data class ExerciseRecord(
     val name: String,
     val sets: MutableList<SetRecord> = mutableListOf()
 )
 
-
-// Data class to hold the entire workout record
+// ✅ Added workoutType
 data class WorkoutRecord(
     val id: String,
     val title: String,
+    val workoutType: String,
     val totalTime: Long,
     val date: String,
     val exercises: List<ExerciseRecord>
 )
-
 
 class WorkoutSessionFragment : Fragment() {
 
@@ -52,24 +42,21 @@ class WorkoutSessionFragment : Fragment() {
     private val binding get() = _binding!!
 
     private var exercises: List<String> = listOf()
+    private var workoutType: String = "Custom" // Default value
     private var currentExerciseIndex = 0
     private var currentSetIndex = 1
     private val totalSetsPerExercise = 3
 
-
-    // List to store records for each exercise
     private val exerciseRecords = mutableListOf<ExerciseRecord>()
 
-    // Timer variables
     private var totalTime = 0L
     private var isRunning = false
     private val handler = Handler()
 
-    // Hydration tracking
     private var hydrationGoal = 10
     private var sipsTaken = 0
-    private val hydrationReminderInterval = 10 * 60 * 1000L // 10 minutes in ms
-    private val hydrationPopupInterval = 5 * 60 * 1000L // 5 minutes
+    private val hydrationReminderInterval = 10 * 60 * 1000L
+    private val hydrationPopupInterval = 5 * 60 * 1000L
     private var lastPopupTime = 0L
 
     private val timerRunnable = object : Runnable {
@@ -112,16 +99,8 @@ class WorkoutSessionFragment : Fragment() {
 
         arguments?.let {
             exercises = it.getStringArrayList("exercise_list") ?: listOf()
+            workoutType = it.getString("workout_type", "Custom") //  Get workout type
         }
-
-
-        binding.btnSipWater.setOnClickListener {
-            sipsTaken++
-            val progress = minOf(sipsTaken, hydrationGoal)
-            binding.textHydrationReminder.text = "Hydration: $progress / $hydrationGoal oz"
-            binding.progressHydration.progress = progress
-        }
-
 
         binding.btnSipWater.setOnClickListener {
             sipsTaken++
@@ -136,9 +115,11 @@ class WorkoutSessionFragment : Fragment() {
             updateSetIndicator()
             startTimer()
         }
+
         binding.btnAddWeight.setOnClickListener {
             addWeightForSet()
         }
+
         return root
     }
 
@@ -153,7 +134,6 @@ class WorkoutSessionFragment : Fragment() {
         binding.textExerciseProgress.text = "Set $currentSetIndex / $totalSetsPerExercise"
     }
 
-    // Called when the user clicks the Add Weight button
     private fun addWeightForSet() {
         val weightInput = binding.editTextWeight.text.toString()
         if (weightInput.isEmpty()) {
@@ -179,10 +159,9 @@ class WorkoutSessionFragment : Fragment() {
             return
         }
 
-        // Clear the input field after retrieving its value
         binding.editTextWeight.text.clear()
         binding.editTextReps.text.clear()
-        // Record the current set
+
         val currentExerciseRecord = exerciseRecords[currentExerciseIndex]
         val setRecord = SetRecord(setNumber = currentSetIndex, weight, reps)
         currentExerciseRecord.sets.add(setRecord)
@@ -191,7 +170,6 @@ class WorkoutSessionFragment : Fragment() {
             currentSetIndex++
             updateSetIndicator()
         } else {
-            //Toast.makeText(requireContext(), "Completed ${exercises[currentExerciseIndex]}", Toast.LENGTH_SHORT).show()
             if (currentExerciseIndex < exercises.size - 1) {
                 currentExerciseIndex++
                 currentSetIndex = 1
@@ -199,14 +177,11 @@ class WorkoutSessionFragment : Fragment() {
                 binding.textCurrentExercise.text = exercises[currentExerciseIndex]
                 updateSetIndicator()
             } else {
-                // If all exercises are done, finish workout
                 binding.textCurrentExercise.text = "Workout Complete!"
                 isRunning = false
-                val totalWaterDrank = sipsTaken // 1 sip = 1 oz
                 handler.removeCallbacks(timerRunnable)
                 saveWorkoutToFirebase()
 
-                // Total weight lifted calculation
                 var totalWeightLifted = 0f
                 for (exercise in exerciseRecords) {
                     for (set in exercise.sets) {
@@ -214,20 +189,21 @@ class WorkoutSessionFragment : Fragment() {
                     }
                 }
 
-
                 val bundle = Bundle().apply {
                     putLong("totalTime", totalTime)
                     putInt("totalWater", sipsTaken)
                     putFloat("totalWeightLifted", totalWeightLifted)
+                    putString("workoutType", workoutType) //  Pass to summary
                 }
-                findNavController().navigate(R.id.action_workoutSessionFragment_to_postWorkoutSummaryFragment, bundle)
-
+                findNavController().navigate(
+                    R.id.action_workoutSessionFragment_to_postWorkoutSummaryFragment,
+                    bundle
+                )
             }
         }
     }
 
     private fun saveWorkoutToFirebase() {
-
         val database = FirebaseDatabase.getInstance()
         val myRef = database.getReference("WorkoutHistory")
 
@@ -240,6 +216,7 @@ class WorkoutSessionFragment : Fragment() {
         val workoutRecord = WorkoutRecord(
             id = workoutTitle,
             title = workoutTitle,
+            workoutType = workoutType, // Save type
             totalTime = totalTime,
             date = dateStr,
             exercises = exerciseRecords
@@ -253,9 +230,7 @@ class WorkoutSessionFragment : Fragment() {
             androidx.appcompat.app.AlertDialog.Builder(it)
                 .setTitle("Hydration Reminder 💧")
                 .setMessage("Here is a friendly reminder to keep drinking water! You should take 10 sips (10 ounces) every 10 minutes!")
-                .setPositiveButton("Got it!") { dialog, _ ->
-                    dialog.dismiss()
-                }
+                .setPositiveButton("Got it!") { dialog, _ -> dialog.dismiss() }
                 .show()
         }
     }

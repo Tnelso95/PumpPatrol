@@ -6,8 +6,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.example.pumppatrol.databinding.FragmentPostWorkoutSummaryBinding
-import com.example.pumppatrol.ui.workout.ExerciseRecord
-import com.example.pumppatrol.ui.workout.SetRecord
 
 class PostWorkoutSummaryFragment : Fragment() {
 
@@ -16,9 +14,8 @@ class PostWorkoutSummaryFragment : Fragment() {
 
     private var totalTime: Long = 0
     private var totalWater: Int = 0
-    private lateinit var exerciseRecords: ArrayList<ExerciseRecord>
-
     private var totalWeightLifted: Float = 0f
+    private lateinit var workoutType: String
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -30,6 +27,7 @@ class PostWorkoutSummaryFragment : Fragment() {
             totalTime = it.getLong("totalTime")
             totalWater = it.getInt("totalWater")
             totalWeightLifted = it.getFloat("totalWeightLifted", 0f)
+            workoutType = it.getString("workoutType", "Custom")
         }
 
         displayWorkoutSummary()
@@ -39,12 +37,20 @@ class PostWorkoutSummaryFragment : Fragment() {
     private fun displayWorkoutSummary() {
         val minutes = (totalTime / 60000).toInt()
         val seconds = (totalTime % 60000 / 1000).toInt()
-        binding.textWorkoutTime.text = "⌚Total Workout Time: $minutes:$seconds"
-        binding.textWaterDrank.text = "💧Total Water Drank: $totalWater oz"
-        binding.textTotalWeightLifted.text = "💪Total Weight Lifted: ${"%.1f".format(totalWeightLifted)} lbs"
+        val formattedTime = String.format("%02d:%02d", minutes, seconds)
 
+        val intensity = when {
+            totalWeightLifted < 500 -> "Light"
+            totalWeightLifted < 1000 -> "Moderate"
+            else -> "Heavy"
+        }
+
+        binding.textWorkoutType.text = "🏋️‍♂️ Workout Type: $workoutType"
+        binding.textWorkoutTime.text = "⌚ Total Workout Time: $formattedTime"
+        binding.textWaterDrank.text = "💧 Total Water Drank: $totalWater oz"
+        binding.textTotalWeightLifted.text = "💪 Total Weight Lifted: ${"%.1f".format(totalWeightLifted)} lbs"
+        binding.textWorkoutIntensity.text = "🔥 Workout Intensity: $intensity"
     }
-
 
     override fun onDestroyView() {
         super.onDestroyView()
