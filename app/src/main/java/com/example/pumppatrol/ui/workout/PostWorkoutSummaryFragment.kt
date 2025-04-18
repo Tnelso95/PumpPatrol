@@ -25,7 +25,7 @@ class PostWorkoutSummaryFragment : Fragment() {
         // Replace this with the fragment you want to navigate to (e.g., HomeFragment)
         val transaction = requireActivity().supportFragmentManager.beginTransaction()
         transaction.replace(R.id.fragment_container, HomeFragment())  // R.id.fragment_container is the container of your fragments
-        transaction.addToBackStack(null)  // Optional: if you want to add this transaction to the back stack
+        transaction.addToBackStack(null)
         transaction.commit()
     }
 
