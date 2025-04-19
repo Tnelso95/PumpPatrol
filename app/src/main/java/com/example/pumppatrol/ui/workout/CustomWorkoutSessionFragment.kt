@@ -61,6 +61,19 @@ class CustomWorkoutSessionFragment : Fragment() {
     private var isRunning = false
     private val handler = Handler()
 
+    private var waterConsumed = 0 // In milliliters
+    private var waterReminderInterval = 10 * 60 * 1000L // 10 minutes
+    private val hydrationHandler = Handler()
+
+    private val hydrationRunnable = object : Runnable {
+        override fun run() {
+            Toast.makeText(requireContext(), "💧 Time to drink water!", Toast.LENGTH_SHORT).show()
+            hydrationHandler.postDelayed(this, waterReminderInterval)
+        }
+    }
+
+
+
     private val timerRunnable = object : Runnable {
         override fun run() {
             if (isRunning) {
@@ -169,6 +182,7 @@ class CustomWorkoutSessionFragment : Fragment() {
             binding.textCurrentExercise.text = "Workout Complete!"
             isRunning = false
             handler.removeCallbacks(timerRunnable)
+            hydrationHandler.removeCallbacks(hydrationRunnable)
             saveWorkoutToFirebaseCustom()
             findNavController().navigate(R.id.action_customWorkoutSessionFragment_to_postWorkoutSummaryFragment)
         }
@@ -178,8 +192,10 @@ class CustomWorkoutSessionFragment : Fragment() {
         if (!isRunning) {
             isRunning = true
             handler.post(timerRunnable)
+            hydrationHandler.postDelayed(hydrationRunnable, waterReminderInterval)
         }
     }
+
 
     private fun saveWorkoutToFirebaseCustom() {
         val database = FirebaseDatabase.getInstance()
@@ -217,7 +233,9 @@ class CustomWorkoutSessionFragment : Fragment() {
         super.onDestroyView()
         isRunning = false
         handler.removeCallbacks(timerRunnable)
+        hydrationHandler.removeCallbacks(hydrationRunnable)
         _binding = null
     }
+
 }
 

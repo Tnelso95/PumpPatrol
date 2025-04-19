@@ -5,9 +5,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
+import com.example.pumppatrol.R
 import com.example.pumppatrol.databinding.FragmentPostWorkoutSummaryBinding
 import com.example.pumppatrol.ui.home.HomeFragment
-import com.example.pumppatrol.R
+import androidx.navigation.fragment.findNavController
 
 
 class PostWorkoutSummaryFragment : Fragment() {
@@ -15,27 +17,27 @@ class PostWorkoutSummaryFragment : Fragment() {
     private var _binding: FragmentPostWorkoutSummaryBinding? = null
     private val binding get() = _binding!!
 
+    private lateinit var viewModel: PostWorkoutViewModel
+
     private var totalTime: Long = 0
     private var totalWater: Int = 0
     private var totalWeightLifted: Float = 0f
     private lateinit var workoutType: String
 
-    // This method replaces the current fragment with the home screen fragment
-    private fun goToHomeScreen() {
-        // Replace this with the fragment you want to navigate to (e.g., HomeFragment)
-        val transaction = requireActivity().supportFragmentManager.beginTransaction()
-        transaction.replace(R.id.fragment_container, HomeFragment())  // R.id.fragment_container is the container of your fragments
-        transaction.addToBackStack(null)
-        transaction.commit()
-    }
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         _binding = FragmentPostWorkoutSummaryBinding.inflate(inflater, container, false)
+        return binding.root
+    }
 
-        // Retrieve data passed in the arguments
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        viewModel = ViewModelProvider(this)[PostWorkoutViewModel::class.java]
+
+        // Retrieve arguments
         arguments?.let {
             totalTime = it.getLong("totalTime")
             totalWater = it.getInt("totalWater")
@@ -43,37 +45,40 @@ class PostWorkoutSummaryFragment : Fragment() {
             workoutType = it.getString("workoutType", "Custom")
         }
 
-        // Display the workout summary
-        displayWorkoutSummary()
+        // Send data to ViewModel
+        viewModel.setWorkoutData(workoutType, totalTime, totalWater, totalWeightLifted)
 
-        // Set up Finish button to go to home screen
+        // Observe LiveData
+        viewModel.workoutType.observe(viewLifecycleOwner) {
+            binding.textWorkoutType.text = it
+        }
+
+        viewModel.workoutSummary.observe(viewLifecycleOwner) {
+            binding.textWorkoutTime.text = it
+        }
+
+        viewModel.totalWaterDrank.observe(viewLifecycleOwner) {
+            binding.textWaterDrank.text = it
+        }
+
+        viewModel.totalWeightLifted.observe(viewLifecycleOwner) {
+            binding.textTotalWeightLifted.text = it
+        }
+
+        viewModel.workoutIntensity.observe(viewLifecycleOwner) {
+            binding.textWorkoutIntensity.text = it
+        }
+
+        // Finish button to go back home
         binding.btnFinish.setOnClickListener {
-            goToHomeScreen()  // Replace with navigation logic
+            goToHomeScreen()
         }
-
-        return binding.root
     }
 
-    private fun displayWorkoutSummary() {
-        // Format time
-        val minutes = (totalTime / 60000).toInt()
-        val seconds = (totalTime % 60000 / 1000).toInt()
-        val formattedTime = String.format("%02d:%02d", minutes, seconds)
-
-        // Determine workout intensity
-        val intensity = when {
-            totalWeightLifted < 500 -> "Light"
-            totalWeightLifted < 1000 -> "Moderate"
-            else -> "Heavy"
-        }
-
-        // Display values
-        binding.textWorkoutType.text = "🏋️‍♂️ Workout Type: $workoutType"
-        binding.textWorkoutTime.text = "⌚ Total Workout Time: $formattedTime"
-        binding.textWaterDrank.text = "💧 Total Water Drank: $totalWater oz"
-        binding.textTotalWeightLifted.text = "💪 Total Weight Lifted: ${"%.1f".format(totalWeightLifted)} lbs"
-        binding.textWorkoutIntensity.text = "🔥 Workout Intensity: $intensity"
+    private fun goToHomeScreen() {
+        findNavController().navigate(R.id.navigation_home)
     }
+
 
     override fun onDestroyView() {
         super.onDestroyView()
