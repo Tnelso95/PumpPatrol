@@ -1,99 +1,102 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/scrollView"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="16dp"
-    android:background="@android:color/white">
+    android:orientation="vertical"
+    android:gravity="center"
+    android:padding="16dp">
 
-    <LinearLayout
-        android:id="@+id/linearLayout"
+    <!-- Overall Workout Timer -->
+    <TextView
+        android:id="@+id/textWorkoutTimer"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="20dp"
+        android:text="Time: 00:00"
+        android:textSize="24sp"
+        android:textStyle="bold" />
+
+    <!-- Current Exercise Name -->
+    <TextView
+        android:id="@+id/textCurrentExercise"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="20dp"
+        android:text="Current Exercise"
+        android:textSize="22sp"
+        android:textStyle="bold" />
+
+    <!-- Set Progress Indicator -->
+    <TextView
+        android:id="@+id/textExerciseProgress"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Set 1/?"
+        android:textSize="18sp"
+        android:layout_marginBottom="20dp" />
+
+    <!-- Numerical Input for Weight -->
+    <EditText
+        android:id="@+id/editTextWeight"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:gravity="center_horizontal">
+        android:hint="Enter weight"
+        android:inputType="numberDecimal"
+        android:layout_marginBottom="20dp" />
 
-        <!-- Workout Timer -->
-        <TextView
-            android:id="@+id/textWorkoutTimer"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="00:00"
-            android:textSize="36sp"
-            android:textStyle="bold"
-            android:layout_marginBottom="24dp" />
+    <!-- Numerical Input for Reps -->
+    <EditText
+        android:id="@+id/editTextReps"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Enter reps"
+        android:inputType="number"
+        android:layout_marginBottom="20dp" />
 
-        <!-- Current Exercise -->
-        <TextView
-            android:id="@+id/textCurrentExercise"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Exercise Name"
-            android:textSize="24sp"
-            android:textStyle="bold"
-            android:layout_marginBottom="8dp" />
+    <!-- Button to record the weight for the current set -->
+    <Button
+        android:id="@+id/btnAddWeight"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Next Set"
+        android:layout_marginBottom="20dp" />
 
-        <!-- Set Indicator -->
-        <TextView
-            android:id="@+id/textExerciseProgress"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Set 1 / 3"
-            android:textSize="18sp"
-            android:layout_marginBottom="16dp" />
+    <!-- Hydration Reminder -->
+    <TextView
+        android:id="@+id/textHydrationReminder"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Hydration: 0 / 10 oz"
+        android:textSize="16sp"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="8dp" />
 
-        <!-- Weight Input -->
-        <EditText
-            android:id="@+id/editTextWeight"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Enter weight (lbs)"
-            android:inputType="numberDecimal"
-            android:layout_marginBottom="12dp" />
+    <!-- Hydration Progress Bar -->
+    <ProgressBar
+        android:id="@+id/progressHydration"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="match_parent"
+        android:layout_height="16dp"
+        android:max="100"
+        android:progress="0"
+        android:progressTint="@android:color/holo_blue_light"
+        android:layout_marginBottom="12dp" />
 
-        <!-- Reps Input -->
-        <EditText
-            android:id="@+id/editTextReps"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Enter reps"
-            android:inputType="number"
-            android:layout_marginBottom="16dp" />
+    <!-- Sip Water Button -->
+    <Button
+        android:id="@+id/btnSipWater"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="I Took a Sip!" />
 
-        <!-- Add Weight Button -->
-        <Button
-            android:id="@+id/btnAddWeight"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Add Set"
-            android:layout_marginBottom="24dp" />
+    <!-- (Optional) Next Exercise Button -->
+    <Button
+        android:id="@+id/btnNextExercise"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Next Exercise"
+        android:textSize="18sp"
+        android:visibility="gone" />
 
-        <!-- Hydration Reminder -->
-        <TextView
-            android:id="@+id/textHydrationReminder"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Hydration: 0 / 10 oz"
-            android:textSize="16sp"
-            android:layout_marginTop="16dp"
-            android:layout_marginBottom="8dp" />
-
-        <!-- Hydration Progress Bar -->
-        <ProgressBar
-            android:id="@+id/progressHydration"
-            style="?android:attr/progressBarStyleHorizontal"
-            android:layout_width="match_parent"
-            android:layout_height="16dp"
-            android:max="100"
-            android:progress="0"
-            android:progressTint="@android:color/holo_blue_light"
-            android:layout_marginBottom="12dp" />
-
-        <!-- Sip Water Button -->
-        <Button
-            android:id="@+id/btnSipWater"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="I Took a Sip!" />
-    </LinearLayout>
-</ScrollView>
+</LinearLayout>
