@@ -99,7 +99,7 @@ class WorkoutSessionFragment : Fragment() {
 
         arguments?.let {
             exercises = it.getStringArrayList("exercise_list") ?: listOf()
-            workoutType = it.getString("workout_type", "Custom") //  Get workout type
+            workoutType = it.getString("workout_type", workoutType) //  Get workout type
         }
 
         binding.btnSipWater.setOnClickListener {
