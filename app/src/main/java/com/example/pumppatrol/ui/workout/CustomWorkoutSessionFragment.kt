@@ -201,11 +201,17 @@ class CustomWorkoutSessionFragment : Fragment() {
             handler.removeCallbacks(timerRunnable)
             saveWorkoutToFirebaseCustom()
 
-            // Pass data to the next screen
+            // New additions start here:
+            val totalWeightLifted = sessionResults.sumOf { (it.weight * it.reps).toDouble() }.toFloat()
+            val workoutType = sessionItems.map { it.muscleGroup }
+                .distinct()
+                .joinToString(", ")
+
             val bundle = Bundle().apply {
                 putLong("totalTime", totalTime)
                 putInt("totalWater", sipsTaken)
-                putString("workoutType", "Custom") // You can modify this based on your need
+                putFloat("totalWeightLifted", totalWeightLifted)
+                putString("workoutType", workoutType)
             }
 
             findNavController().navigate(
@@ -232,7 +238,6 @@ class CustomWorkoutSessionFragment : Fragment() {
 
         // Here, group sessionResults back into ExerciseRecords.
         val exerciseRecords = mutableListOf<ExerciseRecord>()
-        // Group by muscleGroup and exercise.
         val grouped = sessionItems.groupBy { Pair(it.muscleGroup, it.exercise) }
         for ((key, items) in grouped) {
             val record = ExerciseRecord(name = key.second)
