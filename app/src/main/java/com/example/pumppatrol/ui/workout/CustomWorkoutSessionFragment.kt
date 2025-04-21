@@ -1,4 +1,3 @@
-
 package com.example.pumppatrol.ui.workout
 
 import android.os.Bundle
@@ -15,22 +14,20 @@ import com.google.firebase.database.FirebaseDatabase
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
-import java.io.Serializable
-
+import kotlin.math.min
 
 data class SessionItem(
     val muscleGroup: String,
     val exercise: String,
     val setNumber: Int,
     val totalSets: Int
-) : Serializable
+) : java.io.Serializable
 
 data class SessionItemResult(
     val item: SessionItem,
     val weight: Float,
     val reps: Int
-) : Serializable
-
+) : java.io.Serializable
 
 class CustomWorkoutSessionFragment : Fragment() {
 
@@ -61,6 +58,18 @@ class CustomWorkoutSessionFragment : Fragment() {
     private var isRunning = false
     private val handler = Handler()
 
+    // Hydration tracking variables
+    private var hydrationGoal = 10
+    private var sipsTaken = 0
+    private val hydrationReminderInterval = 10 * 60 * 1000L
+    private val hydrationPopupInterval = 5 * 60 * 1000L
+    private var lastPopupTime = 0L
+
+    // Session items and results for the custom workout.
+    private val sessionItems = mutableListOf<SessionItem>()
+    private var currentSessionIndex = 0
+    private val sessionResults = mutableListOf<SessionItemResult>()
+
     private val timerRunnable = object : Runnable {
         override fun run() {
             if (isRunning) {
@@ -68,15 +77,29 @@ class CustomWorkoutSessionFragment : Fragment() {
                 val minutes = (totalTime / 60000).toInt()
                 val seconds = ((totalTime % 60000) / 1000).toInt()
                 binding.textWorkoutTimer.text = String.format("%02d:%02d", minutes, seconds)
+
+                // Hydration reminder logic
+                if ((totalTime - lastPopupTime) >= hydrationPopupInterval) {
+                    lastPopupTime = totalTime
+                    showHydrationPopup()
+                }
+
+                val hydrationBlocks = (totalTime / hydrationReminderInterval).toInt() + 1
+                hydrationGoal = hydrationBlocks * 10
+
+                val currentProgress = min(sipsTaken, hydrationGoal)
+                binding.textHydrationReminder.text = "Hydration: $currentProgress / $hydrationGoal oz"
+                binding.progressHydration.max = hydrationGoal
+                binding.progressHydration.progress = currentProgress
+
+                if (totalTime % hydrationReminderInterval == 0L && totalTime > 0) {
+                    binding.textHydrationReminder.text = "Time to drink 10 oz of water!"
+                }
+
                 handler.postDelayed(this, 1000)
             }
         }
     }
-
-    // Session items and results for the custom workout.
-    private val sessionItems = mutableListOf<SessionItem>()
-    private var currentSessionIndex = 0
-    private val sessionResults = mutableListOf<SessionItemResult>()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
@@ -121,6 +144,13 @@ class CustomWorkoutSessionFragment : Fragment() {
 
         binding.btnAddWeight.setOnClickListener {
             addWeightForSessionItem()
+        }
+
+        binding.btnSipWater.setOnClickListener {
+            sipsTaken++
+            val progress = min(sipsTaken, hydrationGoal)
+            binding.textHydrationReminder.text = "Hydration: $progress / $hydrationGoal oz"
+            binding.progressHydration.progress = progress
         }
 
         return root
@@ -170,7 +200,24 @@ class CustomWorkoutSessionFragment : Fragment() {
             isRunning = false
             handler.removeCallbacks(timerRunnable)
             saveWorkoutToFirebaseCustom()
-            findNavController().navigate(R.id.action_customWorkoutSessionFragment_to_postWorkoutSummaryFragment)
+
+            // New additions start here:
+            val totalWeightLifted = sessionResults.sumOf { (it.weight * it.reps).toDouble() }.toFloat()
+            val workoutType = sessionItems.map { it.muscleGroup }
+                .distinct()
+                .joinToString(", ")
+
+            val bundle = Bundle().apply {
+                putLong("totalTime", totalTime)
+                putInt("totalWater", sipsTaken)
+                putFloat("totalWeightLifted", totalWeightLifted)
+                putString("workoutType", workoutType)
+            }
+
+            findNavController().navigate(
+                R.id.action_customWorkoutSessionFragment_to_postWorkoutSummaryFragment,
+                bundle
+            )
         }
     }
 
@@ -191,7 +238,6 @@ class CustomWorkoutSessionFragment : Fragment() {
 
         // Here, group sessionResults back into ExerciseRecords.
         val exerciseRecords = mutableListOf<ExerciseRecord>()
-        // Group by muscleGroup and exercise.
         val grouped = sessionItems.groupBy { Pair(it.muscleGroup, it.exercise) }
         for ((key, items) in grouped) {
             val record = ExerciseRecord(name = key.second)
@@ -203,6 +249,7 @@ class CustomWorkoutSessionFragment : Fragment() {
             }
             exerciseRecords.add(record)
         }
+
         val workoutRecord = WorkoutRecord(
             id = workoutTitle,
             title = workoutTitle,
@@ -213,6 +260,16 @@ class CustomWorkoutSessionFragment : Fragment() {
         myRef.child(workoutTitle).setValue(workoutRecord)
     }
 
+    private fun showHydrationPopup() {
+        activity?.let {
+            androidx.appcompat.app.AlertDialog.Builder(it)
+                .setTitle("Hydration Reminder 💧")
+                .setMessage("Here is a friendly reminder to keep drinking water! You should take 10 sips (10 ounces) every 10 minutes!")
+                .setPositiveButton("Got it!") { dialog, _ -> dialog.dismiss() }
+                .show()
+        }
+    }
+
     override fun onDestroyView() {
         super.onDestroyView()
         isRunning = false
@@ -220,4 +277,3 @@ class CustomWorkoutSessionFragment : Fragment() {
         _binding = null
     }
 }
-

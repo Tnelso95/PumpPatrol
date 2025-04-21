@@ -68,6 +68,7 @@ class PremadeWorkoutFragment : Fragment() {
         val dbRef = Firebase.database.getReference("Workouts")
         dbRef.addValueEventListener(object: ValueEventListener{
             override fun onDataChange(snapshot: DataSnapshot) {
+
                 latestSnapshot = snapshot
                 // render the default first day
                 renderDay(snapshot, dayOptions[spinner.selectedItemPosition].second)

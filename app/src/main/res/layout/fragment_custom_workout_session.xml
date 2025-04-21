@@ -36,7 +36,7 @@
         android:textSize="18sp"
         android:layout_marginBottom="20dp" />
 
-    <!-- Numerical Input for Weight (no dropdown) -->
+    <!-- Numerical Input for Weight -->
     <EditText
         android:id="@+id/editTextWeight"
         android:layout_width="match_parent"
@@ -62,16 +62,35 @@
         android:text="Next Set"
         android:layout_marginBottom="20dp" />
 
+    <!-- Hydration Reminder -->
+    <TextView
+        android:id="@+id/textHydrationReminder"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Hydration: 0 / 10 oz"
+        android:textSize="16sp"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="8dp" />
 
+    <!-- Hydration Progress Bar -->
+    <ProgressBar
+        android:id="@+id/progressHydration"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="match_parent"
+        android:layout_height="16dp"
+        android:max="100"
+        android:progress="0"
+        android:progressTint="@android:color/holo_blue_light"
+        android:layout_marginBottom="12dp" />
 
-<!--    <Button-->
-<!--        android:id="@+id/btnAddReps"-->
-<!--        android:layout_width="wrap_content"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:text="Add Reps"-->
-<!--        android:layout_marginBottom="20dp" />-->
+    <!-- Sip Water Button -->
+    <Button
+        android:id="@+id/btnSipWater"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="I Took a Sip!" />
 
-    <!-- (Optional) Next Exercise Button (can be hidden if not needed) -->
+    <!-- (Optional) Next Exercise Button -->
     <Button
         android:id="@+id/btnNextExercise"
         android:layout_width="wrap_content"
@@ -81,4 +100,3 @@
         android:visibility="gone" />
 
 </LinearLayout>
-
