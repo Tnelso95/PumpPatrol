@@ -1,4 +1,3 @@
-
 package com.example.pumppatrol.ui.history
 
 import androidx.lifecycle.LiveData
@@ -27,32 +26,25 @@ class HistoryViewModel : ViewModel() {
             override fun onDataChange(snapshot: DataSnapshot) {
                 val historyText = StringBuilder()
 
-                for (workoutSnapshot in snapshot.children) {
-                    // Retrieve the main fields from each workout
+                // Collect the children into a List and reverse it
+                val workouts = snapshot.children.toList().asReversed()
+
+                for (workoutSnapshot in workouts) {
                     val title = workoutSnapshot.child("title").getValue(String::class.java)
                     val totalTime = workoutSnapshot.child("totalTime").getValue(Long::class.java)
-
-                    // Skip if either is missing
                     if (title == null || totalTime == null) continue
 
-                    // Append workout header info
                     historyText.append("Workout: ").append(title).append("\n")
                     historyText.append("  Duration: ").append(formatTime(totalTime)).append("\n")
                     historyText.append("  Exercises:\n")
 
-                    // Get the node that holds all exercises
                     val exercisesNode = workoutSnapshot.child("exercises")
-
-                    // Iterate over each exercise (e.g. "0", "1", "2" keys)
                     for (exerciseChild in exercisesNode.children) {
-                        // Retrieve the exercise name
                         val exerciseName = exerciseChild.child("name")
                             .getValue(String::class.java) ?: "Unnamed Exercise"
                         historyText.append("    - ").append(exerciseName).append("\n")
 
-                        // Retrieve the sets node
                         val setsNode = exerciseChild.child("sets")
-                        // Iterate over each set
                         for (setChild in setsNode.children) {
                             val setNumber = setChild.child("setNumber")
                                 .getValue(Int::class.java) ?: -1
@@ -70,7 +62,7 @@ class HistoryViewModel : ViewModel() {
                                 .append("\n")
                         }
                     }
-                    historyText.append("\n") // Spacing between workouts
+                    historyText.append("\n")
                 }
 
                 _workoutHistory.value = historyText.toString()
@@ -88,6 +80,3 @@ class HistoryViewModel : ViewModel() {
         return String.format(Locale.getDefault(), "%02d:%02d", minutes, seconds)
     }
 }
-
-
-
