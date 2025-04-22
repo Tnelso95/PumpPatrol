@@ -50,6 +50,17 @@
         app:layout_constraintStart_toStartOf="parent"
          />
 
+    <com.example.pumppatrol.AvatarView
+        android:id="@+id/homeAvatar"
+        android:layout_width="400dp"
+        android:layout_height="400dp"
+        android:layout_marginStart="-100dp"
+        android:layout_marginBottom="-40dp"
+        android:scaleType="centerCrop"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:translationZ="1dp" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>
 
