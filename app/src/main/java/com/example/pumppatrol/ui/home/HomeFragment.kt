@@ -15,13 +15,14 @@ import com.example.pumppatrol.AvatarView
 import com.example.pumppatrol.R
 import com.example.pumppatrol.databinding.FragmentHomeBinding
 import com.google.android.material.bottomsheet.BottomSheetDialog
+import java.text.SimpleDateFormat
+import java.util.*
 
 class HomeFragment : Fragment() {
 
     private var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding!!
 
-    // Full list of missions, now paired with a boolean to track completion
     private val allMissions = mutableListOf(
         "Complete 5 Push-ups", "Run 1 Mile", "Do 20 Squats", "Hold a 30s Plank",
         "Do 10 Burpees", "Jump Rope for 2 Minutes", "Bike for 3 Miles", "Walk 5,000 Steps",
@@ -35,9 +36,7 @@ class HomeFragment : Fragment() {
     private var currentMission: String? = null
     private var completedMissionsCount = 0 // Track the number of completed missions
 
-    // Achievements List
     private val achievementsList = mutableListOf<String>()
-
     private val achievementsThresholds = listOf(
         1 to "First Mission Completed",
         10 to "10 Missions Completed",
@@ -48,7 +47,8 @@ class HomeFragment : Fragment() {
     )
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
+    ): View {
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
         val root: View = binding.root
 
@@ -63,21 +63,113 @@ class HomeFragment : Fragment() {
         val avatarView = binding.homeAvatar // Assuming the view ID is `homeAvatar` in XML
         avatarView.updateAvatar(savedBodyResId)
 
-
-
-        showMissionsButton.setOnClickListener {
-            showMissionsBottomSheet(selectedMissionText, completeMissionButton)
+        // ✅ Show streak popup only once per day
+        if (shouldShowStreakPopup()) {
+            showStreakPopupIfNeeded()
         }
 
-        completeMissionButton.setOnClickListener {
-            completeMission(selectedMissionText, completeMissionButton)
+        val sharedPrefs = requireActivity().getSharedPreferences("calorie_prefs", Context.MODE_PRIVATE)
+
+        // Reset calories and goal every launch
+        sharedPrefs.edit()
+            .putInt("caloriesConsumed", 0)
+            .putInt("calorieGoal", 0)
+            .apply()
+
+        var consumed = 0
+        var goal = 0
+
+        val trackerButton = binding.btnOpenCalorieTracker
+        val calorieInput = binding.etCalorieInput
+        val addButton = binding.btnAddCalories
+        val inputContainer = binding.calorieInputContainer
+        val calorieProgressBar = binding.calorieProgressBar
+        val calorieProgressText = binding.calorieProgressText
+
+        // Init
+        calorieProgressBar.progress = 0
+        calorieProgressText.text = "$consumed / $goal calories"
+        inputContainer.visibility = View.GONE
+
+        trackerButton.setOnClickListener {
+            inputContainer.visibility = View.VISIBLE
+            calorieInput.hint = if (goal == 0) "Set Calorie Goal" else "Add Calories"
+            calorieInput.requestFocus()
         }
 
-        achievementsButton.setOnClickListener {
+        addButton.setOnClickListener {
+            val input = calorieInput.text.toString()
+            val number = input.toIntOrNull()
+
+            if (goal == 0) {
+                // Set goal
+                if (number != null && number > 0) {
+                    goal = number
+                    consumed = 0
+                    calorieProgressBar.progress = 0
+                    calorieProgressText.text = "$consumed / $goal calories"
+                    calorieInput.hint = "Add Calories"
+                    calorieInput.text.clear()
+
+                    sharedPrefs.edit()
+                        .putInt("calorieGoal", goal)
+                        .putInt("caloriesConsumed", consumed)
+                        .apply()
+
+                    Toast.makeText(requireContext(), "Goal set to $goal calories", Toast.LENGTH_SHORT).show()
+                } else {
+                    Toast.makeText(requireContext(), "Enter a valid calorie goal", Toast.LENGTH_SHORT).show()
+                }
+            } else {
+                // Add calories
+                if (number != null && number > 0) {
+                    consumed += number
+                    val progress = (consumed * 100 / goal).coerceAtMost(100)
+                    calorieProgressBar.progress = progress
+                    calorieProgressText.text = "$consumed / $goal calories"
+                    calorieInput.text.clear()
+
+                    sharedPrefs.edit()
+                        .putInt("caloriesConsumed", consumed)
+                        .apply()
+
+                    Toast.makeText(requireContext(), "+$number calories added", Toast.LENGTH_SHORT).show()
+                } else {
+                    Toast.makeText(requireContext(), "Enter a valid number of calories", Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
+
+        binding.showMissionsButton.setOnClickListener {
+            showMissionsBottomSheet(binding.selectedMissionText, binding.completeMissionButton)
+        }
+
+        binding.completeMissionButton.setOnClickListener {
+            completeMission(binding.selectedMissionText, binding.completeMissionButton)
+        }
+
+        binding.achievementsButton.setOnClickListener {
             showAchievementsBottomSheet()
         }
 
         return root
+    }
+
+    private fun shouldShowStreakPopup(): Boolean {
+        val prefs = requireActivity().getSharedPreferences("streak_prefs", Context.MODE_PRIVATE)
+        val lastShownDate = prefs.getString("lastShownDate", null)
+        val today = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(Date())
+
+        return if (lastShownDate != today) {
+            prefs.edit().putString("lastShownDate", today).apply()
+            true
+        } else {
+            false
+        }
+    }
+
+    private fun showStreakPopupIfNeeded() {
+        Toast.makeText(requireContext(), "🔥 Daily Streak: You're on a roll!", Toast.LENGTH_LONG).show()
     }
 
     private fun showMissionsBottomSheet(missionTextView: TextView, completeButton: Button) {
@@ -90,7 +182,6 @@ class HomeFragment : Fragment() {
         val view = layoutInflater.inflate(R.layout.bottom_sheet_missions, null)
         val listView: ListView = view.findViewById(R.id.missionsListView)
 
-        // Custom adapter to display missions with checkmarks for completed ones
         val adapter = object : ArrayAdapter<Pair<String, Boolean>>(requireContext(), android.R.layout.simple_list_item_1, availableMissions) {
             override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
                 val view = super.getView(position, convertView, parent) as TextView
