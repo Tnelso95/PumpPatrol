@@ -1,5 +1,6 @@
 package com.example.pumppatrol.ui.home
 
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -10,6 +11,7 @@ import android.widget.ListView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import com.example.pumppatrol.AvatarView
 import com.example.pumppatrol.R
 import com.example.pumppatrol.databinding.FragmentHomeBinding
 import com.google.android.material.bottomsheet.BottomSheetDialog
@@ -54,6 +56,14 @@ class HomeFragment : Fragment() {
         val selectedMissionText: TextView = binding.selectedMissionText
         val completeMissionButton: Button = binding.completeMissionButton
         val achievementsButton: Button = binding.achievementsButton
+
+        // Load and apply saved avatar
+        val sharedPref = requireActivity().getSharedPreferences("AppSettings", Context.MODE_PRIVATE)
+        val savedBodyResId = sharedPref.getInt("avatar_body", R.drawable.body2)
+        val avatarView = binding.homeAvatar // Assuming the view ID is `homeAvatar` in XML
+        avatarView.updateAvatar(savedBodyResId)
+
+
 
         showMissionsButton.setOnClickListener {
             showMissionsBottomSheet(selectedMissionText, completeMissionButton)
@@ -104,6 +114,7 @@ class HomeFragment : Fragment() {
         dialog.setContentView(view)
         dialog.show()
     }
+
 
     private fun showAchievementsBottomSheet() {
         val dialog = BottomSheetDialog(requireContext())

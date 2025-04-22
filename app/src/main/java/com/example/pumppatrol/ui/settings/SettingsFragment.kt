@@ -23,29 +23,50 @@ class SettingsFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentSettingsBinding.inflate(inflater, container, false)
+
+        val avatarView = binding.avatarView
+
+        // Check if the avatarView is ready and attached
+        if (avatarView.isAttachedToWindow) {
+            avatarView.updateAvatar(
+                R.drawable.base1
+            )
+        }
+
         return binding.root
     }
+
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+
+
         sharedPreferences = requireActivity().getSharedPreferences("AppSettings", Context.MODE_PRIVATE)
 
+        val avatarView = binding.avatarView
         val switchTheme = binding.switchTheme
 
-        // Load saved theme preference
+        // Load avatar body from SharedPreferences
+        val savedAvatar = sharedPreferences.getInt("avatar_body", R.drawable.body2)
+        avatarView.updateAvatar(savedAvatar)
+
+        // Theme setup (same as before)
         val isDarkMode = sharedPreferences.getBoolean("DarkMode", false)
         switchTheme.isChecked = isDarkMode
-
-        // Apply theme
         applyTheme(isDarkMode)
 
-        // Prevent listener from triggering on initialization
         switchTheme.setOnCheckedChangeListener { _, isChecked ->
             saveThemePreference(isChecked)
             applyTheme(isChecked)
         }
+
+        // Avatar click listener
+        avatarView.setOnClickListener {
+            showAvatarSelectionDialog()
+        }
     }
+
 
     private fun saveThemePreference(isDarkMode: Boolean) {
         with(sharedPreferences.edit()) {
@@ -64,6 +85,30 @@ class SettingsFragment : Fragment() {
         val background = if (isDarkMode) R.drawable.background_dark else R.drawable.background_light
         requireActivity().window.decorView.setBackgroundResource(background)
     }
+
+    private fun showAvatarSelectionDialog() {
+        val avatarOptions = arrayOf("Body 1", "Body 2", "Body 3")
+        val avatarDrawables = arrayOf(
+            R.drawable.body1,
+            R.drawable.body2,
+            R.drawable.body3
+        )
+
+        android.app.AlertDialog.Builder(requireContext())
+            .setTitle("Choose Avatar Body")
+            .setItems(avatarOptions) { _, which ->
+                val selectedRes = avatarDrawables[which]
+                binding.avatarView.updateAvatar(selectedRes)
+
+                // Save the selected avatar
+                with(sharedPreferences.edit()) {
+                    putInt("avatar_body", selectedRes)
+                    apply()
+                }
+            }
+            .show()
+    }
+
 
 
     override fun onDestroyView() {
