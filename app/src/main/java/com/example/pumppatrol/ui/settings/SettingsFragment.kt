@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.fragment.app.Fragment
 import com.example.pumppatrol.R
@@ -18,9 +19,7 @@ class SettingsFragment : Fragment() {
     private lateinit var sharedPreferences: SharedPreferences
 
     override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
         _binding = FragmentSettingsBinding.inflate(inflater, container, false)
         return binding.root
@@ -37,10 +36,10 @@ class SettingsFragment : Fragment() {
         val isDarkMode = sharedPreferences.getBoolean("DarkMode", false)
         switchTheme.isChecked = isDarkMode
 
-        // Apply theme
+        // Apply theme immediately
         applyTheme(isDarkMode)
 
-        // Prevent listener from triggering on initialization
+        // Toggle listener
         switchTheme.setOnCheckedChangeListener { _, isChecked ->
             saveThemePreference(isChecked)
             applyTheme(isChecked)
@@ -56,15 +55,15 @@ class SettingsFragment : Fragment() {
 
     private fun applyTheme(isDarkMode: Boolean) {
         val mode = if (isDarkMode) AppCompatDelegate.MODE_NIGHT_YES else AppCompatDelegate.MODE_NIGHT_NO
-        if (AppCompatDelegate.getDefaultNightMode() != mode) {
-            AppCompatDelegate.setDefaultNightMode(mode)
-        }
+        AppCompatDelegate.setDefaultNightMode(mode)
 
-        // Change background dynamically
+        // Properly apply theme without activity recreation
+        (requireActivity() as AppCompatActivity).delegate.applyDayNight()
+
+        // Optional: update background
         val background = if (isDarkMode) R.drawable.background_dark else R.drawable.background_light
         requireActivity().window.decorView.setBackgroundResource(background)
     }
-
 
     override fun onDestroyView() {
         super.onDestroyView()

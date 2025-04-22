@@ -11,6 +11,13 @@
         android:label="@string/title_home"
         tools:layout="@layout/fragment_home" />
 
+    <!-- ✅ Calorie Tracker Fragment -->
+    <fragment
+        android:id="@+id/calorieTrackerFragment"
+        android:name="com.example.pumppatrol.ui.calorietracker.CalorieTrackerFragment"
+        android:label="Calorie Tracker"
+        tools:layout="@layout/fragment_calorie_tracker" />
+
     <fragment
         android:id="@+id/navigation_workout"
         android:name="com.example.pumppatrol.ui.workout.WorkoutFragment"
@@ -18,7 +25,6 @@
         tools:layout="@layout/fragment_workout" >
         <action
             android:id="@+id/action_workoutOptions_to_premadeWorkoutFragment"
-
             app:destination="@id/premadeWorkoutFragment" />
         <action
             android:id="@+id/action_workoutOptions_to_customWorkoutFragment"
@@ -27,16 +33,14 @@
     </fragment>
 
     <fragment
-    android:id="@+id/premadeWorkoutFragment"
-    android:name="com.example.pumppatrol.ui.workout.PremadeWorkoutFragment"
-    tools:layout="@layout/fragment_premade_workout"
-    android:label="Pre-Made Workout" >
+        android:id="@+id/premadeWorkoutFragment"
+        android:name="com.example.pumppatrol.ui.workout.PremadeWorkoutFragment"
+        tools:layout="@layout/fragment_premade_workout"
+        android:label="Pre-Made Workout" >
         <action
             android:id="@+id/action_workoutOptions_to_workoutSessionFragment"
-
             app:destination="@id/workoutSessionFragment" />
     </fragment>
-
 
     <fragment
         android:id="@+id/postWorkoutSummaryFragment"
@@ -48,27 +52,22 @@
             app:destination="@id/navigation_workout"/>
     </fragment>
 
-
-
-
     <fragment
-    android:id="@+id/workoutSessionFragment"
-    android:name="com.example.pumppatrol.ui.workout.WorkoutSessionFragment"
-    android:label="Workout Session">
-    <action
-        android:id="@+id/action_workoutSessionFragment_to_postWorkoutSummaryFragment"
-        app:destination="@id/postWorkoutSummaryFragment" />
-
+        android:id="@+id/workoutSessionFragment"
+        android:name="com.example.pumppatrol.ui.workout.WorkoutSessionFragment"
+        android:label="Workout Session">
+        <action
+            android:id="@+id/action_workoutSessionFragment_to_postWorkoutSummaryFragment"
+            app:destination="@id/postWorkoutSummaryFragment" />
     </fragment>
 
     <fragment
-    android:id="@+id/customWorkoutFragment"
-    android:name="com.example.pumppatrol.ui.workout.CustomWorkoutFragment"
-    tools:layout="@layout/fragment_custom_workout"
-    android:label="Custom Workout" >
+        android:id="@+id/customWorkoutFragment"
+        android:name="com.example.pumppatrol.ui.workout.CustomWorkoutFragment"
+        tools:layout="@layout/fragment_custom_workout"
+        android:label="Custom Workout" >
         <action
             android:id="@+id/action_workoutOptions_to_workoutSessionFragment"
-
             app:destination="@id/workoutSessionFragment" />
     </fragment>
 
@@ -76,15 +75,12 @@
         android:id="@+id/navigation_settings"
         android:name="com.example.pumppatrol.ui.settings.SettingsFragment"
         android:label="Settings"
-        tools:layout="@layout/fragment_settings">
-    </fragment>
-
+        tools:layout="@layout/fragment_settings" />
 
     <fragment
         android:id="@+id/navigation_history"
         android:name="com.example.pumppatrol.ui.history.HistoryFragment"
         android:label="@string/title_history"
         tools:layout="@layout/fragment_history" />
-
 
 </navigation>
