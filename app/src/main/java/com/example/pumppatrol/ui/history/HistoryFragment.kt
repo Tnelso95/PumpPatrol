@@ -15,15 +15,19 @@ class HistoryFragment : Fragment() {
     private val binding get() = _binding!!
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
+        inflater: LayoutInflater,
+        container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        val historyViewModel = ViewModelProvider(this).get(HistoryViewModel::class.java)
+        val historyViewModel = ViewModelProvider(this)
+            .get(HistoryViewModel::class.java)
+
         _binding = FragmentHistoryBinding.inflate(inflater, container, false)
         val root: View = binding.root
 
-        historyViewModel.workoutHistory.observe(viewLifecycleOwner) { historyText ->
-            binding.textHistory.text = historyText
+        // Observe CharSequence—will include our bold spans
+        historyViewModel.workoutHistory.observe(viewLifecycleOwner) { charSeq ->
+            binding.textHistory.text = charSeq
         }
         return root
     }
@@ -33,5 +37,4 @@ class HistoryFragment : Fragment() {
         _binding = null
     }
 }
-
 

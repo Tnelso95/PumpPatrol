@@ -1,75 +1,133 @@
+
 package com.example.pumppatrol.ui.history
 
+import android.graphics.Typeface
+import android.text.Spannable
+import android.text.SpannableStringBuilder
+import android.text.style.StyleSpan
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.database.ValueEventListener
+import com.google.firebase.database.*
 import java.util.Locale
 
 class HistoryViewModel : ViewModel() {
 
-    private val _workoutHistory = MutableLiveData<String>()
-    val workoutHistory: LiveData<String> = _workoutHistory
+    // Now holds SpannableStringBuilder so we can bold parts of it
+    private val _workoutHistory = MutableLiveData<SpannableStringBuilder>()
+    val workoutHistory: LiveData<SpannableStringBuilder> = _workoutHistory
 
     init {
         fetchWorkoutHistory()
     }
 
     private fun fetchWorkoutHistory() {
-        val database = FirebaseDatabase.getInstance()
-        val myRef = database.getReference("WorkoutHistory")
-
+        val myRef = FirebaseDatabase.getInstance().getReference("WorkoutHistory")
         myRef.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
-                val historyText = StringBuilder()
-
-                // Collect the children into a List and reverse it
+                val ssb = SpannableStringBuilder()
                 val workouts = snapshot.children.toList().asReversed()
 
+                // month names for prettier dates
+                val months = listOf(
+                    "Jan","Feb","Mar","Apr","May","Jun",
+                    "Jul","Aug","Sep","Oct","Nov","Dec"
+                )
+
                 for (workoutSnapshot in workouts) {
-                    val title = workoutSnapshot.child("title").getValue(String::class.java)
-                    val totalTime = workoutSnapshot.child("totalTime").getValue(Long::class.java)
-                    if (title == null || totalTime == null) continue
+                    // rawTitle looks like "Workout_2025-04-21_16-22"
+                    val rawTitle = workoutSnapshot
+                        .child("title")
+                        .getValue(String::class.java)
+                        ?: continue
+                    val totalTime = workoutSnapshot
+                        .child("totalTime")
+                        .getValue(Long::class.java)
+                        ?: continue
 
-                    historyText.append("Workout: ").append(title).append("\n")
-                    historyText.append("  Duration: ").append(formatTime(totalTime)).append("\n")
-                    historyText.append("  Exercises:\n")
+                    // strip prefix & split into date + time
+                    val parts = rawTitle
+                        .removePrefix("Workout_")
+                        .split("_", limit = 2)
 
+                    val prettyDateTime = if (parts.size == 2) {
+                        val (datePart, timePart) = parts
+
+                        // format "2025-04-21" → "Apr 21, 2025"
+                        val dp = datePart.split("-")
+                        val prettyDate = if (dp.size == 3) {
+                            val y = dp[0].toIntOrNull()
+                            val m = dp[1].toIntOrNull()
+                            val d = dp[2].toIntOrNull()
+                            if (y != null && m != null && m in 1..12 && d != null) {
+                                // now m is smart‐cast to non‑null Int
+                                "${months[m - 1]} $d, $y"
+                            } else datePart
+                        } else datePart
+
+                        // format "16-22" → "4:22 PM"
+                        val tp = timePart.split("-", limit = 2)
+                        val prettyTime = if (tp.size == 2) {
+                            val hour = tp[0].toIntOrNull() ?: 0
+                            val minute = tp[1].padStart(2, '0')
+                            val ampm = if (hour >= 12) "PM" else "AM"
+                            val h12 = if (hour % 12 == 0) 12 else hour % 12
+                            "$h12:$minute $ampm"
+                        } else timePart
+
+                        "$prettyDate  $prettyTime"
+                    } else rawTitle
+
+                    // BOLD the title line
+                    val start = ssb.length
+                    ssb.append("• $prettyDateTime\n")
+                    ssb.setSpan(
+                        StyleSpan(Typeface.BOLD),
+                        start,
+                        ssb.length,
+                        Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+                    )
+
+                    // Duration
+                    ssb.append("    Duration: ${formatTime(totalTime)}\n")
+
+                    // Each exercise + sets
                     val exercisesNode = workoutSnapshot.child("exercises")
                     for (exerciseChild in exercisesNode.children) {
-                        val exerciseName = exerciseChild.child("name")
-                            .getValue(String::class.java) ?: "Unnamed Exercise"
-                        historyText.append("    - ").append(exerciseName).append("\n")
-
-                        val setsNode = exerciseChild.child("sets")
-                        for (setChild in setsNode.children) {
-                            val setNumber = setChild.child("setNumber")
-                                .getValue(Int::class.java) ?: -1
-                            val weight = setChild.child("weight")
-                                .getValue(Float::class.java) ?: 0f
-                            val reps = setChild.child("reps")
-                                .getValue(Int::class.java) ?: 0
-
-                            historyText.append("         Set ")
-                                .append(setNumber)
-                                .append(": Weight: ")
-                                .append(weight)
-                                .append(", Reps: ")
-                                .append(reps)
-                                .append("\n")
+                        val name = exerciseChild
+                            .child("name")
+                            .getValue(String::class.java)
+                            ?: "Exercise"
+                        ssb.append("      - $name\n")
+                        for (setChild in exerciseChild.child("sets").children) {
+                            val setNum = setChild
+                                .child("setNumber")
+                                .getValue(Int::class.java)
+                                ?: continue
+                            val weight = setChild
+                                .child("weight")
+                                .getValue(Float::class.java)
+                                ?: continue
+                            val reps = setChild
+                                .child("reps")
+                                .getValue(Int::class.java)
+                                ?: continue
+                            ssb.append(
+                                "          Set $setNum: $weight lb x $reps reps\n"
+                            )
                         }
                     }
-                    historyText.append("\n")
+
+                    // extra spacing between workouts
+                    ssb.append("\n")
                 }
 
-                _workoutHistory.value = historyText.toString()
+                _workoutHistory.value = ssb
             }
 
             override fun onCancelled(error: DatabaseError) {
-                _workoutHistory.value = "Error fetching workout history: ${error.message}"
+                _workoutHistory.value =
+                    SpannableStringBuilder("Error loading history: ${error.message}")
             }
         })
     }
