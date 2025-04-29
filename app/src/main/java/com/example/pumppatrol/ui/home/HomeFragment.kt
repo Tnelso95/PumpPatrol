@@ -52,6 +52,7 @@ class HomeFragment : Fragment() {
             showStreakPopupIfNeeded()
         }
 
+
         val sharedPrefs = requireActivity().getSharedPreferences("calorie_prefs", Context.MODE_PRIVATE)
 
         // Reset calories and goal every launch
