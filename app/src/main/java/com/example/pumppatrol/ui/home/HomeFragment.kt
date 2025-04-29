@@ -5,13 +5,8 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ArrayAdapter
-import android.widget.Button
-import android.widget.ListView
-import android.widget.TextView
-import android.widget.Toast
+import android.widget.*
 import androidx.fragment.app.Fragment
-import com.example.pumppatrol.AvatarView
 import com.example.pumppatrol.R
 import com.example.pumppatrol.databinding.FragmentHomeBinding
 import com.google.android.material.bottomsheet.BottomSheetDialog
@@ -32,18 +27,18 @@ class HomeFragment : Fragment() {
         "Run Up and Down Stairs for 2 Minutes", "Do 25 Calf Raises"
     )
 
-    private var availableMissions = allMissions.map { it to false }.toMutableList() // Pair<String, Boolean>
+    private var availableMissions = allMissions.map { it to false }.toMutableList()
     private var currentMission: String? = null
-    private var completedMissionsCount = 0 // Track the number of completed missions
+    private var completedMissionsCount = 0
 
     private val achievementsList = mutableListOf<String>()
     private val achievementsThresholds = listOf(
         1 to "First Mission Completed",
         10 to "10 Missions Completed",
         50 to "50 Missions Completed",
-        10 to "Ran 10 Miles Total", // You can track specific missions for distance, e.g. running 1 mile
-        100 to "Performed 100 Push-ups", // Track push-up related missions
-        20 to "Completed All Missions" // Track total completed missions
+        10 to "Ran 10 Miles Total",
+        100 to "Performed 100 Push-ups",
+        20 to "Completed All Missions"
     )
 
     override fun onCreateView(
@@ -52,21 +47,11 @@ class HomeFragment : Fragment() {
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
         val root: View = binding.root
 
-        val showMissionsButton: Button = binding.showMissionsButton
-        val selectedMissionText: TextView = binding.selectedMissionText
-        val completeMissionButton: Button = binding.completeMissionButton
-        val achievementsButton: Button = binding.achievementsButton
-
-        // Load and apply saved avatar
-        val sharedPref = requireActivity().getSharedPreferences("AppSettings", Context.MODE_PRIVATE)
-        val savedBodyResId = sharedPref.getInt("avatar_body", R.drawable.body2)
-        val avatarView = binding.homeAvatar // Assuming the view ID is `homeAvatar` in XML
-        avatarView.updateAvatar(savedBodyResId)
-
         // ✅ Show streak popup only once per day
         if (shouldShowStreakPopup()) {
             showStreakPopupIfNeeded()
         }
+
 
         val sharedPrefs = requireActivity().getSharedPreferences("calorie_prefs", Context.MODE_PRIVATE)
 
@@ -174,7 +159,7 @@ class HomeFragment : Fragment() {
 
     private fun showMissionsBottomSheet(missionTextView: TextView, completeButton: Button) {
         if (availableMissions.isEmpty()) {
-            availableMissions = allMissions.map { it to false }.toMutableList() // Reset missions
+            availableMissions = allMissions.map { it to false }.toMutableList()
             Toast.makeText(requireContext(), "All missions completed! Resetting list.", Toast.LENGTH_SHORT).show()
         }
 
@@ -186,7 +171,7 @@ class HomeFragment : Fragment() {
             override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
                 val view = super.getView(position, convertView, parent) as TextView
                 val (mission, completed) = availableMissions[position]
-                view.text = if (completed) "✅ $mission" else mission // Add checkmark if completed
+                view.text = if (completed) "✅ $mission" else mission
                 return view
             }
         }
@@ -206,13 +191,11 @@ class HomeFragment : Fragment() {
         dialog.show()
     }
 
-
     private fun showAchievementsBottomSheet() {
         val dialog = BottomSheetDialog(requireContext())
         val view = layoutInflater.inflate(R.layout.bottom_sheet_achievements, null)
         val listView: ListView = view.findViewById(R.id.achievementsListView)
 
-        // Refresh achievements list
         achievementsList.clear()
         checkAchievements()
 
@@ -230,7 +213,6 @@ class HomeFragment : Fragment() {
     }
 
     private fun checkAchievements() {
-        // Check if new achievements should be unlocked based on completed missions
         for ((threshold, achievement) in achievementsThresholds) {
             if (completedMissionsCount >= threshold && !achievementsList.contains(achievement)) {
                 achievementsList.add(achievement)
@@ -240,23 +222,17 @@ class HomeFragment : Fragment() {
 
     private fun completeMission(missionTextView: TextView, completeButton: Button) {
         if (currentMission != null) {
-            // Find the mission in the list and mark it as completed
             availableMissions = availableMissions.map {
                 if (it.first == currentMission) it.copy(second = true) else it
             }.toMutableList()
 
-            // Increment completed mission count
             completedMissionsCount++
-
             Toast.makeText(requireContext(), "Mission Completed! ✅", Toast.LENGTH_SHORT).show()
 
             missionTextView.text = "No mission selected"
             completeButton.visibility = View.GONE
 
-            // Refresh the missions list to show checkmarks
             showMissionsBottomSheet(missionTextView, completeButton)
-
-            // Update achievements
             showAchievementsBottomSheet()
         }
     }

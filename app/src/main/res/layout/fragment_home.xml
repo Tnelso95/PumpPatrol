@@ -10,8 +10,7 @@
         android:id="@+id/showMissionsButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="88dp"
+        android:layout_marginTop="72dp"
         android:text="Select Mission"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -20,32 +19,33 @@
         android:id="@+id/selectedMissionText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
         android:text="No mission selected"
         android:textSize="18sp"
         android:visibility="gone"
+        app:layout_constraintTop_toBottomOf="@id/showMissionsButton"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/showMissionsButton" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0" />
 
     <Button
         android:id="@+id/completeMissionButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
         android:layout_marginTop="8dp"
         android:text="Complete Mission"
+        android:textColor="@android:color/white"
+        android:backgroundTint="@color/mission_button_color"
         android:visibility="gone"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/selectedMissionText" />
+        app:layout_constraintTop_toBottomOf="@id/selectedMissionText"
+        app:layout_constraintStart_toStartOf="parent" />
 
     <Button
         android:id="@+id/achievementsButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"        android:text="Achievements"
         android:layout_marginTop="16dp"
+        android:text="Achievements"
         app:layout_constraintTop_toBottomOf="@id/completeMissionButton"
         app:layout_constraintStart_toStartOf="parent" />
 
@@ -120,18 +120,4 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
-    <com.example.pumppatrol.AvatarView
-        android:id="@+id/homeAvatar"
-        android:layout_width="400dp"
-        android:layout_height="400dp"
-        android:layout_marginStart="-100dp"
-        android:layout_marginBottom="-40dp"
-        android:scaleType="centerCrop"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        android:translationZ="1dp" />
-
-
 </androidx.constraintlayout.widget.ConstraintLayout>
-
-

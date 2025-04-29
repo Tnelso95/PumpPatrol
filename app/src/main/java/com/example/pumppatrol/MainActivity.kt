@@ -19,7 +19,6 @@ import com.example.pumppatrol.databinding.ActivityMainBinding
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import java.text.SimpleDateFormat
 import java.util.*
-import android.content.Context
 
 class MainActivity : AppCompatActivity() {
 
@@ -40,9 +39,6 @@ class MainActivity : AppCompatActivity() {
         // Set Toolbar
         val toolbar: Toolbar = findViewById(R.id.toolbar)
         setSupportActionBar(toolbar)
-
-
-
 
         // Initialize SharedPreferences
         sharedPreferences = getSharedPreferences("AppSettings", MODE_PRIVATE)
@@ -83,7 +79,7 @@ class MainActivity : AppCompatActivity() {
                 }
                 loginLayout.visibility = View.GONE
                 mainContent.visibility = View.VISIBLE
-                loginStreak() // Update login streak after successful login
+                loginStreak() // Only update streak after successful login
             }
         }
     }
@@ -96,36 +92,21 @@ class MainActivity : AppCompatActivity() {
         applyBackground(isDarkMode)
     }
 
-    private fun checkLoginState(loginLayout: View, mainContent: View) {
-        val isLoggedIn = sharedPreferences.getBoolean("isLoggedIn", false)
-        if (isLoggedIn) {
-            loginLayout.visibility = View.GONE
-            mainContent.visibility = View.VISIBLE
-            loginStreak() // Update streak on resume if logged in
-        } else {
-            loginLayout.visibility = View.VISIBLE
-            mainContent.visibility = View.GONE
-        }
-    }
-
     private fun applyBackground(isDarkMode: Boolean) {
         val backgroundRes = if (isDarkMode) R.drawable.background_dark else R.drawable.background_light
         binding.root.setBackgroundResource(backgroundRes)
     }
 
-    private fun showStreakPopup(streakCount: Int, badgeMessage: String?) {
-        val alertDialog = android.app.AlertDialog.Builder(this)
-        alertDialog.setTitle("Daily Login Streak")
-
-        var message = "Welcome back! Your streak is now $streakCount days. Keep going! \uD83D\uDD25"
-        if (badgeMessage != null) {
-            message += "\n\n\uD83C\uDFC6 You've earned a badge!\n$badgeMessage"
+    private fun checkLoginState(loginLayout: View, mainContent: View) {
+        val isLoggedIn = sharedPreferences.getBoolean("isLoggedIn", false)
+        if (isLoggedIn) {
+            loginLayout.visibility = View.GONE
+            mainContent.visibility = View.VISIBLE
+            loginStreak() // Show streak popup only on login
+        } else {
+            loginLayout.visibility = View.VISIBLE
+            mainContent.visibility = View.GONE
         }
-
-        alertDialog.setMessage(message)
-        alertDialog.setPositiveButton("OK") { dialog, _ -> dialog.dismiss() }
-        alertDialog.setCancelable(false)
-        //alertDialog.show()
     }
 
     private fun loginStreak() {
@@ -170,6 +151,21 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    private fun showStreakPopup(streakCount: Int, badgeMessage: String?) {
+        val alertDialog = android.app.AlertDialog.Builder(this)
+        alertDialog.setTitle("Daily Login Streak")
+
+        var message = "Welcome back! Your streak is now $streakCount days. Keep going! \uD83D\uDD25"
+        if (badgeMessage != null) {
+            message += "\n\n\uD83C\uDFC6 You've earned a badge!\n$badgeMessage"
+        }
+
+        alertDialog.setMessage(message)
+        alertDialog.setPositiveButton("OK") { dialog, _ -> dialog.dismiss() }
+        alertDialog.setCancelable(false)
+        alertDialog.show()
+    }
+
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.menu_main, menu)
         return true
@@ -193,7 +189,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        // Apply theme on resume
+        // Apply theme on resume, but do not show streak popup here
         applyTheme()
 
         // Re-check login state and update UI accordingly
