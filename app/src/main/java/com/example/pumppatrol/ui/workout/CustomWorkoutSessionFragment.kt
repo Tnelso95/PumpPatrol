@@ -268,6 +268,8 @@ class CustomWorkoutSessionFragment : Fragment() {
                 .setPositiveButton("Got it!") { dialog, _ -> dialog.dismiss() }
                 .show()
         }
+
+        //This is a test to make sure this page is pushed to main
     }
 
     override fun onDestroyView() {
