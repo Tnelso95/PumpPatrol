@@ -9,6 +9,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.example.pumppatrol.databinding.FragmentHistoryBinding
 
+
 class HistoryFragment : Fragment() {
 
     private var _binding: FragmentHistoryBinding? = null
